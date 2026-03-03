@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?= htmlspecialchars($title) ?></title>
+  <style>
+    body { font-family: sans-serif; background-color: #121212; color: #ffffff; text-align: center; padding: 50px; }
+    h1 { color: #ff5722; font-size: 3em; margin-bottom: 10px; }
+    a { color: #00bcd4; text-decoration: none; border: 1px solid #00bcd4; padding: 10px 20px; border-radius: 5px; display: inline-block; margin-top: 20px; }
+    a:hover { background-color: #00bcd4; color: #121212; }
+  </style>
+</head>
+<body>
+<h1>404</h1>
+<h2><?= htmlspecialchars($message) ?></h2>
+<a href="/">Wróć do Panelu Głównego</a>
+</body>
+</html>
