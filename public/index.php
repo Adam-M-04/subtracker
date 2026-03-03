@@ -16,7 +16,10 @@ use \Core\Router;
 $router = new Router();
 
 $router->get('/', 'Controllers\HomeController', 'index');
+
 $router->get('/login', 'Controllers\AuthController', 'loginForm');
+$router->post('/login', 'Controllers\AuthController', 'login');
+$router->get('/logout', 'Controllers\AuthController', 'logout');
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
