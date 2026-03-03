@@ -59,3 +59,65 @@
         </div>
     </div>
 </div>
+
+<div class="modal-overlay" id="addSubscriptionModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div>
+                <h3>Add Subscription</h3>
+                <p>Track your recurring expenses effortlessly.</p>
+            </div>
+            <button class="close-modal" id="closeModalBtn">&times;</button>
+        </div>
+
+        <form id="subscriptionForm">
+            <div class="form-group">
+                <label>Service Name</label>
+                <input type="text" class="form-control" placeholder="e.g. Netflix, Spotify, Adobe" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="number" step="0.01" class="form-control" placeholder="$ 0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Currency</label>
+                    <select class="form-control">
+                        <option>USD ($)</option>
+                        <option>EUR (€)</option>
+                        <option>PLN (zł)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Billing Cycle</label>
+                    <select class="form-control">
+                        <option>Monthly</option>
+                        <option>Yearly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select class="form-control">
+                        <option>Select Category</option>
+                        <option>Entertainment</option>
+                        <option>Productivity</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>First Payment Date</label>
+                <input type="date" class="form-control" required>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancelModalBtn">Cancel</button>
+                <button type="submit" class="btn" style="width: auto; padding: 10px 24px;">&#10003; Save Subscription</button>
+            </div>
+        </form>
+    </div>
+</div>
