@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use Core\Controller;
+use Repositories\UserRepository;
 
 class AuthController extends Controller
 {
@@ -20,20 +21,17 @@ class AuthController extends Controller
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        // TYMCZASOWE: Symulacja bazy danych dla testów ról
-        $mockUsers = [
-            'admin@subtracker.pl' => ['id' => 1, 'role' => 'admin', 'password' => 'admin123'],
-            'user@example.com' => ['id' => 2, 'role' => 'user', 'password' => 'user123']
-        ];
+        $userRepo = new UserRepository();
+        $user = $userRepo->findByEmail($email);
 
-        if (array_key_exists($email, $mockUsers) && $mockUsers[$email]['password'] === $password) {
-            $_SESSION['user_id'] = $mockUsers[$email]['id'];
-            $_SESSION['user_email'] = $email;
-            $_SESSION['user_role'] = $mockUsers[$email]['role'];
+        if ($user && password_verify($password, $user->getPasswordHash())) {
+            $_SESSION['user_id'] = $user->getId();
+            $_SESSION['user_email'] = $user->getEmail();
+            $_SESSION['user_role'] = $user->getRole();
 
             $this->redirect('/');
         } else {
-            $this->render('login', ['error' => 'Nieprawidłowy email lub hasło.']);
+            $this->render('login', ['error' => 'Invalid email or password.']);
         }
     }
 
