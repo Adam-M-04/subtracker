@@ -1,7 +1,9 @@
 <?php
-    use Core\Auth;
-    $currentUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $role = Auth::role() ?? 'user';
+use Core\Auth;
+use Enums\Role;
+
+$currentUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$role = Auth::role() ?? Role::USER;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +25,7 @@
             <li><a href="/" class="nav-link <?= $currentUri === '/' ? 'active' : '' ?>">Dashboard</a></li>
             <li><a href="/subscriptions" class="nav-link <?= $currentUri === '/subscriptions' ? 'active' : '' ?>">Subscriptions</a></li>
 
-            <?php if ($role === 'admin'): ?>
+            <?php if ($role === Role::ADMIN): ?>
                 <li><a href="/users" class="nav-link <?= $currentUri === '/users' ? 'active' : '' ?>">Users</a></li>
             <?php endif; ?>
 
@@ -76,9 +78,9 @@
                 <div class="form-group">
                     <label>Currency</label>
                     <select class="form-control">
-                        <option value="$">USD ($)</option>
-                        <option value="€">EUR (€)</option>
-                        <option value="zł">PLN (zł)</option>
+                        <option value="1">USD ($)</option>
+                        <option value="2">EUR (€)</option>
+                        <option value="3">PLN (zł)</option>
                     </select>
                 </div>
             </div>
@@ -87,17 +89,18 @@
                 <div class="form-group">
                     <label>Billing Cycle</label>
                     <select class="form-control">
-                        <option value="Monthly">Monthly</option>
-                        <option value="Yearly">Yearly</option>
+                        <option value="1">Monthly</option>
+                        <option value="2">Yearly</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Category</label>
                     <select class="form-control">
-                        <option value="Entertainment">Entertainment</option>
-                        <option value="Productivity">Productivity</option>
-                        <option value="Utilities">Utilities</option>
-                        <option value="Software">Software</option>
+                        <option value="5">General</option>
+                        <option value="1">Entertainment</option>
+                        <option value="2">Productivity</option>
+                        <option value="3">Utilities</option>
+                        <option value="4">Software</option>
                     </select>
                 </div>
             </div>

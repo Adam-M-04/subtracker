@@ -25,7 +25,7 @@ if ($userRepo->findByEmail($email)) {
 $user = new User();
 $user->setEmail($email);
 $user->setPasswordHash(password_hash($password, PASSWORD_BCRYPT));
-$user->setRole($role);
+$user->setRole(\Enums\Role::ADMIN);
 
 if ($userRepo->save($user)) {
     echo "Success! User {$email} created with ID: " . $user->getId() . "\n";

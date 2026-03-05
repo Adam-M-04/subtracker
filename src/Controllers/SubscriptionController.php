@@ -7,6 +7,10 @@ use Core\Auth;
 use Core\JsonResponse;
 use Entities\Subscription;
 use Repositories\SubscriptionRepository;
+use Enums\Currency;
+use Enums\BillingCycle;
+use Enums\Category;
+use Enums\Status;
 use Exception;
 
 class SubscriptionController extends Controller
@@ -15,7 +19,7 @@ class SubscriptionController extends Controller
     {
         Auth::check();
 
-        $repo = new \Repositories\SubscriptionRepository();
+        $repo = new SubscriptionRepository();
         $subscriptions = $repo->findAllByUserId(Auth::id());
 
         $this->render('subscriptions', [
@@ -44,11 +48,11 @@ class SubscriptionController extends Controller
             $subscription->setUserId(Auth::id())
                 ->setName(htmlspecialchars($input['name']))
                 ->setPrice((float)$input['price'])
-                ->setCurrency(htmlspecialchars($input['currency'] ?? 'USD'))
-                ->setBillingCycle(htmlspecialchars($input['billingCycle'] ?? 'Monthly'))
-                ->setCategory(htmlspecialchars($input['category'] ?? 'General'))
+                ->setCurrency(Currency::from((int)($input['currency'] ?? 1)))
+                ->setBillingCycle(BillingCycle::from((int)($input['billingCycle'] ?? 1)))
+                ->setCategory(Category::from((int)($input['category'] ?? 5)))
                 ->setNextPaymentDate(htmlspecialchars($input['next_payment_date']))
-                ->setStatus('Active');
+                ->setStatus(Status::ACTIVE);
 
             $repo = new SubscriptionRepository();
 

@@ -4,6 +4,10 @@ namespace Repositories;
 
 use Core\Repository;
 use Entities\Subscription;
+use Enums\BillingCycle;
+use Enums\Category;
+use Enums\Currency;
+use Enums\Status;
 use PDO;
 
 class SubscriptionRepository extends Repository
@@ -11,9 +15,9 @@ class SubscriptionRepository extends Repository
     public function save(Subscription $subscription): bool
     {
         $sql = "INSERT INTO subscriptions 
-                (user_id, name, price, currency, billing_cycle, category, next_payment_date, status) 
+                (user_id, name, price, currency_id, billing_cycle_id, category_id, next_payment_date, status_id) 
                 VALUES 
-                (:user_id, :name, :price, :currency, :billing_cycle, :category, :next_payment_date, :status) 
+                (:user_id, :name, :price, :currency_id, :billing_cycle_id, :category_id, :next_payment_date, :status_id) 
                 RETURNING id";
 
         $stmt = $this->db->prepare($sql);
@@ -22,11 +26,11 @@ class SubscriptionRepository extends Repository
             'user_id' => $subscription->getUserId(),
             'name' => $subscription->getName(),
             'price' => $subscription->getPrice(),
-            'currency' => $subscription->getCurrency(),
-            'billing_cycle' => $subscription->getBillingCycle(),
-            'category' => $subscription->getCategory(),
+            'currency_id' => $subscription->getCurrency()->value,
+            'billing_cycle_id' => $subscription->getBillingCycle()->value,
+            'category_id' => $subscription->getCategory()->value,
             'next_payment_date' => $subscription->getNextPaymentDate(),
-            'status' => $subscription->getStatus()
+            'status_id' => $subscription->getStatus()->value
         ]);
 
         if ($success) {
@@ -51,11 +55,11 @@ class SubscriptionRepository extends Repository
                 ->setUserId($row['user_id'])
                 ->setName($row['name'])
                 ->setPrice((float)$row['price'])
-                ->setCurrency($row['currency'])
-                ->setBillingCycle($row['billing_cycle'])
-                ->setCategory($row['category'])
+                ->setCurrency(Currency::from($row['currency_id']))
+                ->setBillingCycle(BillingCycle::from($row['billing_cycle_id']))
+                ->setCategory(Category::from($row['category_id']))
                 ->setNextPaymentDate($row['next_payment_date'])
-                ->setStatus($row['status']);
+                ->setStatus(Status::from($row['status_id']));
 
             $subscriptions[] = $sub;
         }

@@ -3,6 +3,7 @@
 namespace Core;
 
 use Entities\User;
+use Enums\Role;
 
 class Auth
 {
@@ -20,7 +21,7 @@ class Auth
     {
         self::check();
 
-        if (self::role() !== 'admin') {
+        if (self::role() !== Role::ADMIN) {
             header("Location: /");
             exit;
         }
@@ -31,7 +32,7 @@ class Auth
         self::startSession();
         $_SESSION['user_id'] = $user->getId();
         $_SESSION['user_email'] = $user->getEmail();
-        $_SESSION['user_role'] = $user->getRole();
+        $_SESSION['user_role'] = $user->getRole()->value;
     }
 
     public static function logout(): void
@@ -53,10 +54,10 @@ class Auth
         return $_SESSION['user_email'] ?? null;
     }
 
-    public static function role(): ?string
+    public static function role(): ?Role
     {
         self::startSession();
-        return $_SESSION['user_role'] ?? null;
+        return isset($_SESSION['user_role']) ? Role::from((int)$_SESSION['user_role']) : null;
     }
 
     private static function startSession(): void

@@ -1,3 +1,35 @@
+<?php
+use Enums\Status;
+use Enums\BillingCycle;
+
+$monthlyCost = 0;
+$yearlyCost = 0;
+$activeServices = 0;
+$nextPayment = null;
+$today = new \DateTime();
+
+foreach ($subscriptions as $sub) {
+    if ($sub->getStatus() === Status::ACTIVE) {
+        $activeServices++;
+
+        if ($sub->getBillingCycle() === BillingCycle::MONTHLY) {
+            $monthlyCost += $sub->getPrice();
+            $yearlyCost += ($sub->getPrice() * 12);
+        } else {
+            $yearlyCost += $sub->getPrice();
+            $monthlyCost += ($sub->getPrice() / 12);
+        }
+
+        $paymentDate = new \DateTime($sub->getNextPaymentDate());
+        if ($paymentDate >= $today) {
+            if ($nextPayment === null || $paymentDate < new \DateTime($nextPayment->getNextPaymentDate())) {
+                $nextPayment = $sub;
+            }
+        }
+    }
+}
+?>
+
 <div class="dashboard-welcome">
     <h3>Welcome back! 👋</h3>
     <p>Here's what's happening with your subscriptions this month.</p>
@@ -21,7 +53,7 @@
         <?php if ($nextPayment): ?>
             <div class="stat-value" style="font-size: 20px;">
                 <?= date('M d', strtotime($nextPayment->getNextPaymentDate())) ?> <br>
-                <span style="font-size: 13px; font-weight: normal;"><?= htmlspecialchars($nextPayment->getName()) ?> ($<?= number_format($nextPayment->getPrice(), 2) ?>)</span>
+                <span style="font-size: 13px; font-weight: normal;"><?= htmlspecialchars($nextPayment->getName()) ?> (<?= $nextPayment->getCurrency()->symbol() ?><?= number_format($nextPayment->getPrice(), 2) ?>)</span>
             </div>
         <?php else: ?>
             <div class="stat-value" style="font-size: 20px;">None</div>
@@ -38,27 +70,31 @@
         <p style="color: var(--text-muted); grid-column: 1 / -1;">No subscriptions found. Click "+ Add Subscription" to get started.</p>
     <?php else: ?>
         <?php foreach ($subscriptions as $sub): ?>
-            <div class="sub-card">
+            <?php $isActive = $sub->getStatus() === Status::ACTIVE; ?>
+
+            <div class="sub-card" style="<?= !$isActive ? 'opacity: 0.6;' : '' ?>">
                 <div class="sub-header">
                     <div class="sub-logo" style="background: var(--primary-color); color: white;">
                         <?= strtoupper(substr($sub->getName(), 0, 1)) ?>
                     </div>
-                    <?php if ($sub->getStatus() === 'Active'): ?>
+                    <?php if ($isActive): ?>
                         <span class="status-badge">Active</span>
                     <?php else: ?>
-                        <span class="status-badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;"><?= htmlspecialchars($sub->getStatus()) ?></span>
+                        <span class="status-badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                            <?= ucfirst(strtolower($sub->getStatus()->name)) ?>
+                        </span>
                     <?php endif; ?>
                 </div>
                 <div class="sub-name"><?= htmlspecialchars($sub->getName()) ?></div>
-                <div class="sub-plan"><?= htmlspecialchars($sub->getCategory() ?? 'General') ?></div>
+                <div class="sub-plan"><?= ucfirst(strtolower($sub->getCategory()->name)) ?></div>
                 <div class="sub-footer">
                     <div class="sub-date">
-                        <label>Next billing</label>
+                        <label><?= $isActive ? 'Next billing' : 'Ended on' ?></label>
                         <span><?= date('M d, Y', strtotime($sub->getNextPaymentDate())) ?></span>
                     </div>
                     <div class="sub-price">
-                        <?= htmlspecialchars($sub->getCurrency()) ?> <?= number_format($sub->getPrice(), 2) ?>
-                        <span>/<?= $sub->getBillingCycle() === 'Monthly' ? 'mo' : 'yr' ?></span>
+                        <?= $sub->getCurrency()->symbol() ?> <?= number_format($sub->getPrice(), 2) ?>
+                        <span>/<?= $sub->getBillingCycle() === BillingCycle::MONTHLY ? 'mo' : 'yr' ?></span>
                     </div>
                 </div>
             </div>
