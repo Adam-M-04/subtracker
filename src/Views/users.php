@@ -1,147 +1,68 @@
-<div class="page-header">
-    <h2>User Management</h2>
-    <p>Manage system access, roles, and permissions.</p>
-</div>
+<?php
+use Enums\Role;
+?>
 
-<div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
-    <div class="stat-card">
-        <div class="stat-title">TOTAL USERS</div>
-        <div class="stat-value" style="font-size: 24px;">1,248</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-title">ACTIVE ADMINS</div>
-        <div class="stat-value" style="font-size: 24px; color: #10b981;">14</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-title">PENDING APPROVAL</div>
-        <div class="stat-value" style="font-size: 24px; color: #f59e0b;">3</div>
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+    <div>
+        <h2>Users Management</h2>
+        <p>Manage registered users and view their subscription statistics.</p>
     </div>
 </div>
 
-<div class="table-container">
-    <table>
-        <thead>
+<div class="card" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color);">
         <tr>
-            <th>User</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Last Active</th>
-            <th>Actions</th>
+            <th style="padding: 16px; font-weight: 500; color: var(--text-muted); font-size: 14px;">ID</th>
+            <th style="padding: 16px; font-weight: 500; color: var(--text-muted); font-size: 14px;">User</th>
+            <th style="padding: 16px; font-weight: 500; color: var(--text-muted); font-size: 14px;">Role</th>
+            <th style="padding: 16px; font-weight: 500; color: var(--text-muted); font-size: 14px; text-align: center;">Active Subs</th>
+            <th style="padding: 16px; font-weight: 500; color: var(--text-muted); font-size: 14px;">Joined</th>
+            <th style="padding: 16px; font-weight: 500; color: var(--text-muted); font-size: 14px; text-align: right;">Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>
-                <div class="user-cell">
-                    <div class="user-avatar-small avatar-purple">JD</div>
-                    <div class="user-details">
-                        <strong>jdoe99</strong>
-                        <span>john.doe@example.com</span>
+        <?php foreach ($users as $user): ?>
+            <?php
+            $fullName = trim(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''));
+            if (empty($fullName)) $fullName = 'No Name Set';
+            $isSelf = $user['id'] === \Core\Auth::id();
+            ?>
+            <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;">
+                <td style="padding: 16px; color: var(--text-muted);"><?= $user['id'] ?></td>
+                <td style="padding: 16px;">
+                    <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">
+                        <?= htmlspecialchars($fullName) ?>
+                        <?php if ($isSelf): ?>
+                            <span style="font-size: 11px; color: var(--text-muted); font-weight: normal; margin-left: 4px;">(You)</span>
+                        <?php endif; ?>
                     </div>
-                </div>
-            </td>
-            <td><span class="role-badge role-admin">Admin</span></td>
-            <td>
-                <div class="status-indicator status-active">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Active</span>
-                </div>
-            </td>
-            <td style="color: var(--text-muted); font-size: 14px;">2 mins ago</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                <div class="user-cell">
-                    <div class="user-avatar-small avatar-pink">SS</div>
-                    <div class="user-details">
-                        <strong>sarah_smith</strong>
-                        <span>s.smith@tech.net</span>
+                    <div style="font-size: 13px; color: var(--text-muted);"><?= htmlspecialchars($user['email']) ?></div>
+                </td>
+                <td style="padding: 16px;">
+                    <?php if ((int)$user['role_id'] === Role::ADMIN->value): ?>
+                        <span class="status-badge" style="background: rgba(37, 99, 235, 0.1); color: #3b82f6;">Admin</span>
+                    <?php else: ?>
+                        <span class="status-badge" style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted);">User</span>
+                    <?php endif; ?>
+                </td>
+                <td style="padding: 16px; text-align: center;">
+                        <span style="background: var(--bg-color); padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid var(--border-color);">
+                            <?= $user['active_subs'] ?>
+                        </span>
+                </td>
+                <td style="padding: 16px; color: var(--text-muted); font-size: 14px;">
+                    <?= date('M d, Y', strtotime($user['created_at'])) ?>
+                </td>
+                <td style="padding: 16px;">
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button class="delete-btn" title="Delete User" <?= $isSelf ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : '' ?>>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
                     </div>
-                </div>
-            </td>
-            <td><span class="role-badge role-user">User</span></td>
-            <td>
-                <div class="status-indicator status-active">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Active</span>
-                </div>
-            </td>
-            <td style="color: var(--text-muted); font-size: 14px;">4 hours ago</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                <div class="user-cell">
-                    <div class="user-avatar-small avatar-blue">MD</div>
-                    <div class="user-details">
-                        <strong>mike_dev</strong>
-                        <span>mike.w@startup.io</span>
-                    </div>
-                </div>
-            </td>
-            <td><span class="role-badge role-user">User</span></td>
-            <td>
-                <div class="status-indicator status-inactive">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Inactive</span>
-                </div>
-            </td>
-            <td style="color: var(--text-muted); font-size: 14px;">2 months ago</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                <div class="user-cell">
-                    <div class="user-avatar-small avatar-green">ER</div>
-                    <div class="user-details">
-                        <strong>emily_r</strong>
-                        <span>emily.rose@design.co</span>
-                    </div>
-                </div>
-            </td>
-            <td><span class="role-badge role-editor">Editor</span></td>
-            <td>
-                <div class="status-indicator status-active">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Active</span>
-                </div>
-            </td>
-            <td style="color: var(--text-muted); font-size: 14px;">1 day ago</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                <div class="user-cell">
-                    <div class="user-avatar-small avatar-orange">AQ</div>
-                    <div class="user-details">
-                        <strong>alex_q</strong>
-                        <span>alex.quinn@web.org</span>
-                    </div>
-                </div>
-            </td>
-            <td><span class="role-badge role-user">User</span></td>
-            <td>
-                <div class="status-indicator status-pending">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Pending</span>
-                </div>
-            </td>
-            <td style="color: var(--text-muted); font-size: 14px;">Never</td>
-            <td></td>
-        </tr>
+                </td>
+            </tr>
+        <?php endforeach; ?>
         </tbody>
     </table>
-    <div class="pagination">
-        <span>Showing 1 to 5 of 128 results</span>
-        <div class="page-numbers">
-            <button class="page-btn">&lsaquo;</button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <button class="page-btn" style="border: none;">...</button>
-            <button class="page-btn">8</button>
-            <button class="page-btn">&rsaquo;</button>
-        </div>
-    </div>
 </div>

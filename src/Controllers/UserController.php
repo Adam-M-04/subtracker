@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Core\Controller;
 use Core\Auth;
+use Repositories\UserRepository;
 
 class UserController extends Controller
 {
@@ -11,9 +12,13 @@ class UserController extends Controller
     {
         Auth::requireAdmin();
 
+        $repo = new UserRepository();
+        $users = $repo->findAllWithStats();
+
         $this->render('users', [
-            'title' => 'Users - SubTracker',
-            'userEmail' => $_SESSION['user_email']
+            'title' => 'Users Management - SubTracker',
+            'userEmail' => Auth::email(),
+            'users' => $users
         ]);
     }
 }
