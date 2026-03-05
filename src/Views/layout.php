@@ -58,26 +58,28 @@ $role = Auth::role() ?? Role::USER;
     <div class="modal-content">
         <div class="modal-header">
             <div>
-                <h3>Add Subscription</h3>
+                <h3 id="modalTitle">Add Subscription</h3>
                 <p>Track your recurring expenses effortlessly.</p>
             </div>
             <button class="close-modal" id="closeModalBtn">&times;</button>
         </div>
 
         <form id="subscriptionForm">
+            <input type="hidden" id="subId" name="id">
+
             <div class="form-group">
                 <label>Service Name</label>
-                <input type="text" class="form-control" placeholder="e.g. Netflix, Spotify, Adobe" required>
+                <input type="text" name="name" class="form-control" placeholder="e.g. Netflix, Spotify, Adobe" required>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Price</label>
-                    <input type="number" step="0.01" class="form-control" placeholder="0.00" required>
+                    <input type="number" name="price" step="0.01" class="form-control" placeholder="0.00" required>
                 </div>
                 <div class="form-group">
                     <label>Currency</label>
-                    <select class="form-control">
+                    <select name="currency" class="form-control">
                         <option value="1">USD ($)</option>
                         <option value="2">EUR (€)</option>
                         <option value="3">PLN (zł)</option>
@@ -88,14 +90,14 @@ $role = Auth::role() ?? Role::USER;
             <div class="form-row">
                 <div class="form-group">
                     <label>Billing Cycle</label>
-                    <select class="form-control">
+                    <select name="billingCycle" class="form-control">
                         <option value="1">Monthly</option>
                         <option value="2">Yearly</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Category</label>
-                    <select class="form-control">
+                    <select name="category" class="form-control">
                         <option value="5">General</option>
                         <option value="1">Entertainment</option>
                         <option value="2">Productivity</option>
@@ -107,7 +109,7 @@ $role = Auth::role() ?? Role::USER;
 
             <div class="form-group">
                 <label>Next Payment Date</label>
-                <input type="date" class="form-control" required>
+                <input type="date" name="next_payment_date" class="form-control" required>
             </div>
 
             <div class="modal-footer">

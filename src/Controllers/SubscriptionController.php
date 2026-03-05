@@ -92,4 +92,41 @@ class SubscriptionController extends Controller
             JsonResponse::send('error', 'Server error: ' . $e->getMessage(), [], 500);
         }
     }
+
+    public function update(): void
+    {
+        Auth::check();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            JsonResponse::send('error', 'Method not allowed', [], 405);
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        if (empty($input['id']) || empty($input['name']) || empty($input['price']) || empty($input['next_payment_date'])) {
+            JsonResponse::send('error', 'Missing required fields', [], 400);
+        }
+
+        try {
+            $subscription = new Subscription();
+            $subscription->setId((int)$input['id'])
+                ->setUserId(Auth::id())
+                ->setName(htmlspecialchars($input['name']))
+                ->setPrice((float)$input['price'])
+                ->setCurrency(Currency::from((int)($input['currency'] ?? 1)))
+                ->setBillingCycle(BillingCycle::from((int)($input['billingCycle'] ?? 1)))
+                ->setCategory(Category::from((int)($input['category'] ?? 5)))
+                ->setNextPaymentDate(htmlspecialchars($input['next_payment_date']));
+
+            $repo = new SubscriptionRepository();
+
+            if ($repo->update($subscription)) {
+                JsonResponse::send('success', 'Subscription updated successfully');
+            } else {
+                JsonResponse::send('error', 'Failed to update subscription', [], 500);
+            }
+        } catch (Exception $e) {
+            JsonResponse::send('error', 'Server error: ' . $e->getMessage(), [], 500);
+        }
+    }
 }

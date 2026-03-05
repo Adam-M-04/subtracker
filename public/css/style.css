@@ -652,21 +652,25 @@ td {
 .page-btn:hover { background: rgba(255, 255, 255, 0.05); }
 .page-btn.active { background: var(--primary-color); border-color: var(--primary-color); }
 
-.delete-btn {
+.edit-btn, .delete-btn {
     background: none;
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    padding: 4px;
-    margin-left: auto;
-    border-radius: 4px;
+    padding: 6px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: 0.2s;
+    transition: all 0.2s ease-in-out;
 }
 
 .delete-btn:hover {
     color: #ef4444;
     background: rgba(239, 68, 68, 0.1);
+}
+
+.edit-btn:hover {
+    color: #2563eb;
+    background: rgba(37, 99, 235, 0.1);
 }

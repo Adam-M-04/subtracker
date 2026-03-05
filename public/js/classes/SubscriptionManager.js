@@ -1,5 +1,6 @@
 export default class SubscriptionManager {
-    constructor() {
+    constructor(subFormInstance) {
+        this.subForm = subFormInstance;
         this.initEvents();
     }
 
@@ -8,6 +9,12 @@ export default class SubscriptionManager {
             const deleteBtn = e.target.closest('.delete-btn');
             if (deleteBtn) {
                 this.handleDelete(deleteBtn.dataset.id);
+            }
+
+            const editBtn = e.target.closest('.edit-btn');
+            if (editBtn) {
+                const data = JSON.parse(editBtn.dataset.sub);
+                this.subForm.openEditMode(data);
             }
         });
     }

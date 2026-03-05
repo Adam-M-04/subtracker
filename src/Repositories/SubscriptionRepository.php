@@ -78,4 +78,31 @@ class SubscriptionRepository extends Repository
         // Returns true only if a row was actually deleted
         return $stmt->rowCount() > 0;
     }
+
+    public function update(Subscription $subscription): bool
+    {
+        $sql = "UPDATE subscriptions SET 
+                name = :name, 
+                price = :price, 
+                currency_id = :currency_id, 
+                billing_cycle_id = :billing_cycle_id, 
+                category_id = :category_id, 
+                next_payment_date = :next_payment_date
+                WHERE id = :id AND user_id = :user_id";
+
+        $stmt = $this->db->prepare($sql);
+
+        $stmt->execute([
+            'name' => $subscription->getName(),
+            'price' => $subscription->getPrice(),
+            'currency_id' => $subscription->getCurrency()->value,
+            'billing_cycle_id' => $subscription->getBillingCycle()->value,
+            'category_id' => $subscription->getCategory()->value,
+            'next_payment_date' => $subscription->getNextPaymentDate(),
+            'id' => $subscription->getId(),
+            'user_id' => $subscription->getUserId()
+        ]);
+
+        return $stmt->rowCount() > 0;
+    }
 }

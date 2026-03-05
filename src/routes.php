@@ -8,6 +8,7 @@ $router->get('/logout', 'Controllers\AuthController', 'logout');
 
 $router->get('/subscriptions', 'Controllers\SubscriptionController', 'index');
 $router->post('/api/subscriptions', 'Controllers\SubscriptionController', 'store');
+$router->post('/api/subscriptions/update', 'Controllers\SubscriptionController', 'update');
 $router->post('/api/subscriptions/delete', 'Controllers\SubscriptionController', 'delete');
 
 $router->get('/users', 'Controllers\UserController', 'index');
