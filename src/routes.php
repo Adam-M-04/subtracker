@@ -9,3 +9,7 @@ $router->get('/logout', 'Controllers\AuthController', 'logout');
 $router->get('/subscriptions', 'Controllers\SubscriptionController', 'index');
 $router->get('/users', 'Controllers\UserController', 'index');
 $router->get('/settings', 'Controllers\SettingsController', 'index');
+
+$router->get('/subscriptions', 'Controllers\SubscriptionController', 'index');
+$router->post('/api/subscriptions', 'Controllers\SubscriptionController', 'store'); // New API Route
+
