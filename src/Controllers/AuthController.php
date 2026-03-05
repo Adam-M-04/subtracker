@@ -3,13 +3,14 @@
 namespace Controllers;
 
 use Core\Controller;
+use Core\Auth;
 use Repositories\UserRepository;
 
 class AuthController extends Controller
 {
     public function loginForm(): void
     {
-        if (isset($_SESSION['user_id'])) {
+        if (Auth::id()) {
             $this->redirect('/');
         }
 
@@ -25,10 +26,7 @@ class AuthController extends Controller
         $user = $userRepo->findByEmail($email);
 
         if ($user && password_verify($password, $user->getPasswordHash())) {
-            $_SESSION['user_id'] = $user->getId();
-            $_SESSION['user_email'] = $user->getEmail();
-            $_SESSION['user_role'] = $user->getRole();
-
+            Auth::login($user);
             $this->redirect('/');
         } else {
             $this->render('login', ['error' => 'Invalid email or password.']);
@@ -37,8 +35,7 @@ class AuthController extends Controller
 
     public function logout(): void
     {
-        session_unset();
-        session_destroy();
+        Auth::logout();
         $this->redirect('/login');
     }
 }

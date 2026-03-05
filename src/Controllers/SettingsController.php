@@ -13,7 +13,7 @@ class SettingsController extends Controller
 
         $this->render('settings', [
             'title' => 'Settings - SubTracker',
-            'userEmail' => $_SESSION['user_email']
+            'userEmail' => Auth::email()
         ]);
     }
 }

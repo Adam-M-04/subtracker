@@ -15,9 +15,13 @@ class SubscriptionController extends Controller
     {
         Auth::check();
 
+        $repo = new \Repositories\SubscriptionRepository();
+        $subscriptions = $repo->findAllByUserId(Auth::id());
+
         $this->render('subscriptions', [
             'title' => 'Subscriptions - SubTracker',
-            'userEmail' => $_SESSION['user_email']
+            'userEmail' => Auth::email(),
+            'subscriptions' => $subscriptions
         ]);
     }
 
@@ -37,7 +41,7 @@ class SubscriptionController extends Controller
 
         try {
             $subscription = new Subscription();
-            $subscription->setUserId($_SESSION['user_id'])
+            $subscription->setUserId(Auth::id())
                 ->setName(htmlspecialchars($input['name']))
                 ->setPrice((float)$input['price'])
                 ->setCurrency(htmlspecialchars($input['currency'] ?? 'USD'))

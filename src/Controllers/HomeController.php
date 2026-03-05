@@ -13,7 +13,7 @@ class HomeController extends Controller
         Auth::check();
 
         $repo = new SubscriptionRepository();
-        $subscriptions = $repo->findAllByUserId($_SESSION['user_id']);
+        $subscriptions = $repo->findAllByUserId(Auth::id());
 
         $monthlyCost = 0;
         $yearlyCost = 0;
@@ -45,7 +45,7 @@ class HomeController extends Controller
 
         $this->render('dashboard', [
             'title' => 'Dashboard - SubTracker',
-            'userEmail' => $_SESSION['user_email'],
+            'userEmail' => Auth::email(),
             'subscriptions' => $subscriptions,
             'monthlyCost' => $monthlyCost,
             'yearlyCost' => $yearlyCost,
