@@ -65,4 +65,31 @@ class SubscriptionController extends Controller
             JsonResponse::send('error', 'Server error: ' . $e->getMessage(), [], 500);
         }
     }
+
+    public function delete(): void
+    {
+        Auth::check();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            JsonResponse::send('error', 'Method not allowed', [], 405);
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        if (empty($input['id'])) {
+            JsonResponse::send('error', 'Missing subscription ID', [], 400);
+        }
+
+        try {
+            $repo = new SubscriptionRepository();
+
+            if ($repo->delete((int)$input['id'], Auth::id())) {
+                JsonResponse::send('success', 'Subscription deleted successfully');
+            } else {
+                JsonResponse::send('error', 'Subscription not found or unauthorized', [], 403);
+            }
+        } catch (Exception $e) {
+            JsonResponse::send('error', 'Server error: ' . $e->getMessage(), [], 500);
+        }
+    }
 }

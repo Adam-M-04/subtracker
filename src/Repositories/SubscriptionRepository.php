@@ -66,4 +66,16 @@ class SubscriptionRepository extends Repository
 
         return $subscriptions;
     }
+
+    public function delete(int $id, int $userId): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM subscriptions WHERE id = :id AND user_id = :user_id");
+        $stmt->execute([
+            'id' => $id,
+            'user_id' => $userId
+        ]);
+
+        // Returns true only if a row was actually deleted
+        return $stmt->rowCount() > 0;
+    }
 }
