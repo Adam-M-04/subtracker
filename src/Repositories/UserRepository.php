@@ -26,4 +26,22 @@ class UserRepository extends Repository
 
         return $user;
     }
+
+    public function save(User $user): bool
+    {
+        $stmt = $this->db->prepare("INSERT INTO users (email, password_hash, role) VALUES (:email, :password_hash, :role) RETURNING id");
+
+        $success = $stmt->execute([
+            'email' => $user->getEmail(),
+            'password_hash' => $user->getPasswordHash(),
+            'role' => $user->getRole()
+        ]);
+
+        if ($success) {
+            $user->setId($stmt->fetchColumn());
+            return true;
+        }
+
+        return false;
+    }
 }

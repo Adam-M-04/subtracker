@@ -14,8 +14,8 @@ CREATE TABLE user_profiles (
 );
 
 INSERT INTO users (id, email, password_hash, role) VALUES
-        (1, 'admin@subtracker.pl', '$2y$10$wN2L02.aJ6lA15gBvI07IezP73V0H0b7P3F9xT3m8WJt.h/L4nJ3m', 'admin'),
-        (2, 'user@example.com', '$2y$10$wN2L02.aJ6lA15gBvI07IezP73V0H0b7P3F9xT3m8WJt.h/L4nJ3m', 'user');
+        (1, 'admin@subtracker.pl', '$2y$12$O09tQc.CRVyKcIotGrXeUO5fCVH2pCX9Ka/cL4gooKmvsGa5m7g8.', 'admin'),
+        (2, 'user@subtracker.pl', '$2y$12$SiaZwwq5Azke6QW9YoowouuLjIA8Y8B5L6w3rY8Ufi.f0gdpwD/H6', 'user');
 
 INSERT INTO user_profiles (user_id, first_name, last_name, currency) VALUES
         (1, 'System', 'Admin', 'PLN'),
