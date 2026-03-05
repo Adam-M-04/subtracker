@@ -6,19 +6,26 @@
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-title">Total Monthly Cost</div>
-        <div class="stat-value">$42.50</div>
+        <div class="stat-value">$<?= number_format($monthlyCost, 2) ?></div>
     </div>
     <div class="stat-card">
         <div class="stat-title">Total Yearly Cost</div>
-        <div class="stat-value">$510.00</div>
+        <div class="stat-value">$<?= number_format($yearlyCost, 2) ?></div>
     </div>
     <div class="stat-card">
         <div class="stat-title">Active Services</div>
-        <div class="stat-value">8</div>
+        <div class="stat-value"><?= $activeServices ?></div>
     </div>
     <div class="stat-card">
         <div class="stat-title">Next Payment</div>
-        <div class="stat-value" style="font-size: 20px;">Oct 24 <br><span style="font-size: 13px; font-weight: normal;">Netflix ($15.99)</span></div>
+        <?php if ($nextPayment): ?>
+            <div class="stat-value" style="font-size: 20px;">
+                <?= date('M d', strtotime($nextPayment->getNextPaymentDate())) ?> <br>
+                <span style="font-size: 13px; font-weight: normal;"><?= htmlspecialchars($nextPayment->getName()) ?> ($<?= number_format($nextPayment->getPrice(), 2) ?>)</span>
+            </div>
+        <?php else: ?>
+            <div class="stat-value" style="font-size: 20px;">None</div>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -27,37 +34,36 @@
 </div>
 
 <div class="subs-grid">
-    <div class="sub-card">
-        <div class="sub-header">
-            <div class="sub-logo" style="background: #e50914; color: white;">N</div>
-            <span class="status-badge">Active</span>
-        </div>
-        <div class="sub-name">Netflix</div>
-        <div class="sub-plan">Standard Plan</div>
-        <div class="sub-footer">
-            <div class="sub-date">
-                <label>Next billing</label>
-                <span>Oct 24, 2023</span>
+    <?php if (empty($subscriptions)): ?>
+        <p style="color: var(--text-muted); grid-column: 1 / -1;">No subscriptions found. Click "+ Add Subscription" to get started.</p>
+    <?php else: ?>
+        <?php foreach ($subscriptions as $sub): ?>
+            <div class="sub-card">
+                <div class="sub-header">
+                    <div class="sub-logo" style="background: var(--primary-color); color: white;">
+                        <?= strtoupper(substr($sub->getName(), 0, 1)) ?>
+                    </div>
+                    <?php if ($sub->getStatus() === 'Active'): ?>
+                        <span class="status-badge">Active</span>
+                    <?php else: ?>
+                        <span class="status-badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;"><?= htmlspecialchars($sub->getStatus()) ?></span>
+                    <?php endif; ?>
+                </div>
+                <div class="sub-name"><?= htmlspecialchars($sub->getName()) ?></div>
+                <div class="sub-plan"><?= htmlspecialchars($sub->getCategory() ?? 'General') ?></div>
+                <div class="sub-footer">
+                    <div class="sub-date">
+                        <label>Next billing</label>
+                        <span><?= date('M d, Y', strtotime($sub->getNextPaymentDate())) ?></span>
+                    </div>
+                    <div class="sub-price">
+                        <?= htmlspecialchars($sub->getCurrency()) ?> <?= number_format($sub->getPrice(), 2) ?>
+                        <span>/<?= $sub->getBillingCycle() === 'Monthly' ? 'mo' : 'yr' ?></span>
+                    </div>
+                </div>
             </div>
-            <div class="sub-price">$15.99<span>/mo</span></div>
-        </div>
-    </div>
-
-    <div class="sub-card">
-        <div class="sub-header">
-            <div class="sub-logo" style="background: #1DB954; color: white;">S</div>
-            <span class="status-badge">Active</span>
-        </div>
-        <div class="sub-name">Spotify</div>
-        <div class="sub-plan">Premium Duo</div>
-        <div class="sub-footer">
-            <div class="sub-date">
-                <label>Next billing</label>
-                <span>Oct 28, 2023</span>
-            </div>
-            <div class="sub-price">$12.99<span>/mo</span></div>
-        </div>
-    </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 
 <div class="modal-overlay" id="addSubscriptionModal">
@@ -79,14 +85,14 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Price</label>
-                    <input type="number" step="0.01" class="form-control" placeholder="$ 0.00" required>
+                    <input type="number" step="0.01" class="form-control" placeholder="0.00" required>
                 </div>
                 <div class="form-group">
                     <label>Currency</label>
                     <select class="form-control">
-                        <option>USD ($)</option>
-                        <option>EUR (€)</option>
-                        <option>PLN (zł)</option>
+                        <option value="$">USD ($)</option>
+                        <option value="€">EUR (€)</option>
+                        <option value="zł">PLN (zł)</option>
                     </select>
                 </div>
             </div>
@@ -95,22 +101,23 @@
                 <div class="form-group">
                     <label>Billing Cycle</label>
                     <select class="form-control">
-                        <option>Monthly</option>
-                        <option>Yearly</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Category</label>
                     <select class="form-control">
-                        <option>Select Category</option>
-                        <option>Entertainment</option>
-                        <option>Productivity</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Productivity">Productivity</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Software">Software</option>
                     </select>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>First Payment Date</label>
+                <label>Next Payment Date</label>
                 <input type="date" class="form-control" required>
             </div>
 
