@@ -15,4 +15,14 @@ class Auth
             exit;
         }
     }
+
+    public static function requireAdmin(): void
+    {
+        self::check();
+
+        if (($_SESSION['user_role'] ?? 'user') !== 'admin') {
+            header("Location: /");
+            exit;
+        }
+    }
 }

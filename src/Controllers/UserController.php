@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     public function index(): void
     {
-        Auth::check();
+        Auth::requireAdmin();
 
         $this->render('users', [
             'title' => 'Users - SubTracker',
