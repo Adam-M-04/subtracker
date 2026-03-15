@@ -22,11 +22,11 @@
             <div class="alert-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
-        <form action="/register" method="POST">
+        <form action="/register" method="POST" id="authForm">
             <div class="form-row">
                 <div class="form-group">
                     <label for="first_name">First Name</label>
-                    <input type="text" id="first_name" name="first_name" class="form-control" placeholder="John" required>
+                    <input type="text" id="first_name" name="first_name" class="form-control" placeholder="John" required autofocus>
                 </div>
                 <div class="form-group">
                     <label for="last_name">Last Name</label>
@@ -49,7 +49,7 @@
                 <input type="password" id="password_confirm" name="password_confirm" class="form-control" placeholder="••••••••" required minlength="6">
             </div>
 
-            <button type="submit" class="btn" style="margin-top: 10px;">Sign Up</button>
+            <button type="submit" class="btn" id="submitBtn" style="margin-top: 10px;">Sign Up</button>
         </form>
 
         <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted);">
@@ -58,5 +58,13 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            document.getElementById('submitBtn').click();
+        }
+    });
+</script>
 </body>
 </html>

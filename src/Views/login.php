@@ -23,10 +23,10 @@
             <div class="alert-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
-        <form action="/login" method="POST">
+        <form action="/login" method="POST" id="authForm">
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" class="form-control" placeholder="name@company.com" required>
+                <input type="email" id="email" name="email" class="form-control" placeholder="name@company.com" required autofocus>
             </div>
 
             <div class="form-group">
@@ -34,7 +34,7 @@
                 <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="btn">Sign In</button>
+            <button type="submit" class="btn" id="submitBtn">Sign In</button>
         </form>
 
         <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted);">
@@ -43,5 +43,13 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            document.getElementById('submitBtn').click();
+        }
+    });
+</script>
 </body>
 </html>
