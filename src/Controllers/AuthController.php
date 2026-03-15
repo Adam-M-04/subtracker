@@ -28,7 +28,9 @@ class AuthController extends Controller
         $user = $userRepo->findByEmail($email);
 
         if ($user && password_verify($password, $user->getPasswordHash())) {
-            Auth::login($user);
+            $profile = $userRepo->getProfile($user->getId());
+            Auth::login($user, $profile);
+
             $this->redirect('/');
         } else {
             $this->render('login', ['error' => 'Invalid email or password.']);
@@ -75,7 +77,9 @@ class AuthController extends Controller
             ->setRole(Role::USER);
 
         if ($userRepo->save($user, $firstName, $lastName)) {
-            Auth::login($user);
+            $profile = ['first_name' => $firstName, 'last_name' => $lastName, 'currency_id' => 1];
+            Auth::login($user, $profile);
+
             $this->redirect('/');
         } else {
             $this->render('register', ['error' => 'A server error occurred during registration.']);

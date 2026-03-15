@@ -15,7 +15,6 @@ class SettingsController extends Controller
         $repo = new UserRepository();
         $profile = $repo->getProfile(Auth::id());
 
-        // Odczytujemy i od razu czyścimy komunikaty z sesji
         $success = $_SESSION['settings_success'] ?? null;
         $error = $_SESSION['settings_error'] ?? null;
         unset($_SESSION['settings_success'], $_SESSION['settings_error']);
@@ -47,6 +46,8 @@ class SettingsController extends Controller
 
         if ($repo->updateProfile(Auth::id(), $firstName, $lastName, $currencyId)) {
             $_SESSION['settings_success'] = 'Profile updated successfully.';
+            $_SESSION['user_currency'] = $currencyId;
+            $_SESSION['user_name'] = trim($firstName . ' ' . $lastName);
         } else {
             $_SESSION['settings_error'] = 'An error occurred while updating your profile.';
         }

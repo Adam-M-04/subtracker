@@ -27,12 +27,16 @@ class Auth
         }
     }
 
-    public static function login(User $user): void
+    public static function login(User $user, array $profile = []): void
     {
         self::startSession();
         $_SESSION['user_id'] = $user->getId();
         $_SESSION['user_email'] = $user->getEmail();
         $_SESSION['user_role'] = $user->getRole()->value;
+
+        $_SESSION['user_currency'] = $profile['currency_id'] ?? 1;
+        $fullName = trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? ''));
+        $_SESSION['user_name'] = !empty($fullName) ? $fullName : $user->getEmail();
     }
 
     public static function logout(): void
@@ -58,6 +62,18 @@ class Auth
     {
         self::startSession();
         return isset($_SESSION['user_role']) ? Role::from((int)$_SESSION['user_role']) : null;
+    }
+
+    public static function name(): ?string
+    {
+        self::startSession();
+        return $_SESSION['user_name'] ?? self::email();
+    }
+
+    public static function currencyId(): int
+    {
+        self::startSession();
+        return $_SESSION['user_currency'] ?? 1;
     }
 
     private static function startSession(): void

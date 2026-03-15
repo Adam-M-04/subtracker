@@ -4,6 +4,8 @@ use Enums\Role;
 
 $currentUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $role = Auth::role() ?? Role::USER;
+$defaultCurrency = Auth::currencyId();
+$userName = Auth::name();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,9 +35,9 @@ $role = Auth::role() ?? Role::USER;
         </ul>
 
         <div class="user-profile">
-            <div class="user-avatar"><?= strtoupper(substr($userEmail ?? 'U', 0, 1)) ?></div>
+            <div class="user-avatar"><?= strtoupper(substr($userName, 0, 1)) ?></div>
             <div class="user-info">
-                <span class="user-name"><?= htmlspecialchars($userEmail ?? 'User') ?></span>
+                <span class="user-name"><?= htmlspecialchars($userName) ?></span>
                 <a href="/logout" class="logout-link">Logout</a>
             </div>
         </div>
@@ -80,9 +82,9 @@ $role = Auth::role() ?? Role::USER;
                 <div class="form-group">
                     <label>Currency</label>
                     <select name="currency" class="form-control">
-                        <option value="1">USD ($)</option>
-                        <option value="2">EUR (€)</option>
-                        <option value="3">PLN (zł)</option>
+                        <option value="1" <?= $defaultCurrency === 1 ? 'selected' : '' ?>>USD ($)</option>
+                        <option value="2" <?= $defaultCurrency === 2 ? 'selected' : '' ?>>EUR (€)</option>
+                        <option value="3" <?= $defaultCurrency === 3 ? 'selected' : '' ?>>PLN (zł)</option>
                     </select>
                 </div>
             </div>
