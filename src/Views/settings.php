@@ -1,62 +1,53 @@
-<div class="page-header">
+<div class="page-header" style="margin-bottom: 24px;">
     <h2>Account Settings</h2>
-    <p>Update your personal information and preferences.</p>
+    <p>Update your personal information and application preferences.</p>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+<?php if (!empty($success)): ?>
+    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 14px;">
+        <?= htmlspecialchars($success) ?>
+    </div>
+<?php endif; ?>
 
-    <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 30px; border-radius: 12px;">
-        <h3 style="margin-bottom: 20px; font-size: 18px;">Profile Information</h3>
-        <form>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>First Name</label>
-                    <input type="text" class="form-control" value="Alex">
-                </div>
-                <div class="form-group">
-                    <label>Last Name</label>
-                    <input type="text" class="form-control" value="Morgan">
-                </div>
-            </div>
+<?php if (!empty($error)): ?>
+    <div class="alert-error" style="margin-bottom: 24px;">
+        <?= htmlspecialchars($error) ?>
+    </div>
+<?php endif; ?>
 
+<div class="card" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 24px; max-width: 600px;">
+    <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 18px; color: #fff;">Profile Information</h3>
+
+    <form action="/settings" method="POST">
+        <div class="form-row">
             <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" class="form-control" value="<?= htmlspecialchars($userEmail) ?>">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" class="form-control" value="<?= htmlspecialchars($profile['first_name'] ?? '') ?>" required>
             </div>
-
             <div class="form-group">
-                <label>Default Currency</label>
-                <select class="form-control">
-                    <option selected>USD ($)</option>
-                    <option>EUR (€)</option>
-                    <option>PLN (zł)</option>
-                </select>
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" class="form-control" value="<?= htmlspecialchars($profile['last_name'] ?? '') ?>">
             </div>
+        </div>
 
+        <div class="form-group">
+            <label for="email">Email Address (Read-only)</label>
+            <input type="email" id="email" class="form-control" value="<?= htmlspecialchars($userEmail) ?>" disabled style="opacity: 0.6; cursor: not-allowed;">
+        </div>
+
+        <h3 style="margin-top: 32px; margin-bottom: 20px; font-size: 18px; color: #fff;">Preferences</h3>
+
+        <div class="form-group">
+            <label for="currency_id">Default Currency</label>
+            <select id="currency_id" name="currency_id" class="form-control">
+                <option value="1" <?= ($profile['currency_id'] == 1) ? 'selected' : '' ?>>USD ($)</option>
+                <option value="2" <?= ($profile['currency_id'] == 2) ? 'selected' : '' ?>>EUR (€)</option>
+                <option value="3" <?= ($profile['currency_id'] == 3) ? 'selected' : '' ?>>PLN (zł)</option>
+            </select>
+        </div>
+
+        <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
             <button type="submit" class="btn" style="width: auto; padding: 10px 24px;">Save Changes</button>
-        </form>
-    </div>
-
-    <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 30px; border-radius: 12px; height: fit-content;">
-        <h3 style="margin-bottom: 20px; font-size: 18px;">Change Password</h3>
-        <form>
-            <div class="form-group">
-                <label>Current Password</label>
-                <input type="password" class="form-control" placeholder="••••••••">
-            </div>
-
-            <div class="form-group">
-                <label>New Password</label>
-                <input type="password" class="form-control" placeholder="••••••••">
-            </div>
-
-            <div class="form-group">
-                <label>Confirm New Password</label>
-                <input type="password" class="form-control" placeholder="••••••••">
-            </div>
-
-            <button type="submit" class="btn" style="width: auto; padding: 10px 24px;">Update Password</button>
-        </form>
-    </div>
-
+        </div>
+    </form>
 </div>

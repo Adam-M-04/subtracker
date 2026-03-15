@@ -86,4 +86,29 @@ class UserRepository extends Repository
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getProfile(int $userId): array
+    {
+        $stmt = $this->db->prepare("SELECT first_name, last_name, currency_id FROM user_profiles WHERE user_id = :user_id");
+        $stmt->execute(['user_id' => $userId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ?: ['first_name' => '', 'last_name' => '', 'currency_id' => 1];
+    }
+
+    public function updateProfile(int $userId, string $firstName, string $lastName, int $currencyId): bool
+    {
+        $stmt = $this->db->prepare("
+            UPDATE user_profiles 
+            SET first_name = :first_name, last_name = :last_name, currency_id = :currency_id 
+            WHERE user_id = :user_id
+        ");
+
+        return $stmt->execute([
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'currency_id' => $currencyId,
+            'user_id' => $userId
+        ]);
+    }
 }

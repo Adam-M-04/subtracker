@@ -19,4 +19,5 @@ $router->post('/api/subscriptions/delete', 'Controllers\SubscriptionController',
 // Inne widoki
 $router->get('/users', 'Controllers\UserController', 'index');
 $router->get('/settings', 'Controllers\SettingsController', 'index');
+$router->post('/settings', 'Controllers\SettingsController', 'update');
 
