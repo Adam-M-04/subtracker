@@ -1,7 +1,11 @@
 <?php
 use Enums\Status;
 use Enums\BillingCycle;
+use Enums\Currency;
+use Services\CurrencyConverter;
+use Core\Auth;
 
+$targetCurrency = Currency::from(Auth::currencyId());
 $monthlyCost = 0;
 $yearlyCost = 0;
 $activeServices = 0;
@@ -12,12 +16,14 @@ foreach ($subscriptions as $sub) {
     if ($sub->getStatus() === Status::ACTIVE) {
         $activeServices++;
 
+        $convertedPrice = CurrencyConverter::convert($sub->getPrice(), $sub->getCurrency(), $targetCurrency);
+
         if ($sub->getBillingCycle() === BillingCycle::MONTHLY) {
-            $monthlyCost += $sub->getPrice();
-            $yearlyCost += ($sub->getPrice() * 12);
+            $monthlyCost += $convertedPrice;
+            $yearlyCost += ($convertedPrice * 12);
         } else {
-            $yearlyCost += $sub->getPrice();
-            $monthlyCost += ($sub->getPrice() / 12);
+            $yearlyCost += $convertedPrice;
+            $monthlyCost += ($convertedPrice / 12);
         }
 
         $paymentDate = new \DateTime($sub->getNextPaymentDate());
@@ -38,11 +44,11 @@ foreach ($subscriptions as $sub) {
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-title">Total Monthly Cost</div>
-        <div class="stat-value">$<?= number_format($monthlyCost, 2) ?></div>
+        <div class="stat-value"><?= $targetCurrency->symbol() ?><?= number_format($monthlyCost, 2) ?></div>
     </div>
     <div class="stat-card">
         <div class="stat-title">Total Yearly Cost</div>
-        <div class="stat-value">$<?= number_format($yearlyCost, 2) ?></div>
+        <div class="stat-value"><?= $targetCurrency->symbol() ?><?= number_format($yearlyCost, 2) ?></div>
     </div>
     <div class="stat-card">
         <div class="stat-title">Active Services</div>

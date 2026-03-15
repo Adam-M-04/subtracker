@@ -16,4 +16,13 @@ enum Currency: int
             self::PLN => 'zł',
         };
     }
+
+    public function code(): string
+    {
+        return match($this) {
+            self::USD => 'USD',
+            self::EUR => 'EUR',
+            self::PLN => 'PLN',
+        };
+    }
 }
