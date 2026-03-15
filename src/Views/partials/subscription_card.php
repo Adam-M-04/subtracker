@@ -1,21 +1,26 @@
 <?php
 use Enums\Status;
 use Enums\BillingCycle;
+use Services\CurrencyConverter;
+use Enums\Currency;
+use Core\Auth;
 
 $isActive = $sub->getStatus() === Status::ACTIVE;
+$targetCurrency = Currency::from(Auth::currencyId());
+$normalizedPrice = CurrencyConverter::convert($sub->getPrice(), $sub->getCurrency(), $targetCurrency);
 
 $subJson = htmlspecialchars(json_encode([
-    'id' => $sub->getId(),
-    'name' => $sub->getName(),
-    'price' => $sub->getPrice(),
-    'currency' => $sub->getCurrency()->value,
-    'billingCycle' => $sub->getBillingCycle()->value,
-    'category' => $sub->getCategory()->value,
-    'next_payment_date' => $sub->getNextPaymentDate()
+        'id' => $sub->getId(),
+        'name' => $sub->getName(),
+        'price' => $sub->getPrice(),
+        'currency' => $sub->getCurrency()->value,
+        'billingCycle' => $sub->getBillingCycle()->value,
+        'category' => $sub->getCategory()->value,
+        'next_payment_date' => $sub->getNextPaymentDate()
 ]));
 ?>
 
-<div class="sub-card" style="<?= !$isActive ? 'opacity: 0.6;' : '' ?>">
+<div class="sub-card" data-category="<?= strtolower($sub->getCategory()->name) ?>" data-date="<?= $sub->getNextPaymentDate() ?>" data-price="<?= $normalizedPrice ?>" style="<?= !$isActive ? 'opacity: 0.6;' : '' ?>">
     <div class="sub-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <div style="display: flex; align-items: center; gap: 12px;">
             <div class="sub-logo" style="background: var(--primary-color); color: white; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; flex-shrink: 0;">
