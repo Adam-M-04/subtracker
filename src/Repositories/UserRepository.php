@@ -6,6 +6,7 @@ use Core\Repository;
 use Entities\User;
 use Enums\Role;
 use PDO;
+use Exception;
 
 class UserRepository extends Repository
 {
@@ -28,22 +29,40 @@ class UserRepository extends Repository
         return $user;
     }
 
-    public function save(User $user): bool
+    public function save(User $user, string $firstName = '', string $lastName = ''): bool
     {
-        $stmt = $this->db->prepare("INSERT INTO users (email, password_hash, role_id) VALUES (:email, :password_hash, :role_id) RETURNING id");
+        try {
+            $this->db->beginTransaction();
 
-        $success = $stmt->execute([
-            'email' => $user->getEmail(),
-            'password_hash' => $user->getPasswordHash(),
-            'role_id' => $user->getRole()->value
-        ]);
+            $stmt = $this->db->prepare("INSERT INTO users (email, password_hash, role_id) VALUES (:email, :password_hash, :role_id) RETURNING id");
 
-        if ($success) {
-            $user->setId($stmt->fetchColumn());
-            return true;
+            $success = $stmt->execute([
+                'email' => $user->getEmail(),
+                'password_hash' => $user->getPasswordHash(),
+                'role_id' => $user->getRole()->value
+            ]);
+
+            if ($success) {
+                $userId = $stmt->fetchColumn();
+                $user->setId($userId);
+
+                $profileStmt = $this->db->prepare("INSERT INTO user_profiles (user_id, first_name, last_name, currency_id) VALUES (:user_id, :first_name, :last_name, 1)");
+                $profileStmt->execute([
+                    'user_id' => $userId,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName
+                ]);
+
+                $this->db->commit();
+                return true;
+            }
+
+            $this->db->rollBack();
+            return false;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return false;
         }
-
-        return false;
     }
 
     public function findAllWithStats(): array

@@ -6,9 +6,9 @@
     <title>Log in - SubTracker</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body style="display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: var(--bg-color);">
 
-<div class="auth-wrapper">
+<div class="auth-wrapper" style="width: 100%; display: flex; justify-content: center;">
     <div class="auth-container">
         <div class="auth-header">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 15px;">
@@ -36,6 +36,10 @@
 
             <button type="submit" class="btn">Sign In</button>
         </form>
+
+        <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted);">
+            Don't have an account? <a href="/register" style="color: #2563eb; text-decoration: none; font-weight: 500;">Sign up</a>
+        </div>
     </div>
 </div>
 

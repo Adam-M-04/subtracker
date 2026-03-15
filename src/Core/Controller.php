@@ -22,7 +22,8 @@ class Controller
             $content = ob_get_clean();
 
             $layoutFile = __DIR__ . '/../Views/layout.php';
-            if (file_exists($layoutFile) && !in_array($view, ['login', '404'])) {
+
+            if (file_exists($layoutFile) && !in_array($view, ['login', 'register', '404'])) {
                 require $layoutFile;
             } else {
                 echo $content;
