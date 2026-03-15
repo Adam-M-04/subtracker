@@ -40,10 +40,13 @@ use Enums\Role;
                     <div style="font-size: 13px; color: var(--text-muted);"><?= htmlspecialchars($user['email']) ?></div>
                 </td>
                 <td style="padding: 16px;">
-                    <?php if ((int)$user['role_id'] === Role::ADMIN->value): ?>
+                    <?php if ($isSelf): ?>
                         <span class="status-badge" style="background: rgba(37, 99, 235, 0.1); color: #3b82f6;">Admin</span>
                     <?php else: ?>
-                        <span class="status-badge" style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted);">User</span>
+                        <select class="form-control role-select" data-id="<?= $user['id'] ?>" style="padding: 4px 8px; width: auto; font-size: 13px; height: auto;">
+                            <option value="1" <?= (int)$user['role_id'] === Role::USER->value ? 'selected' : '' ?>>User</option>
+                            <option value="2" <?= (int)$user['role_id'] === Role::ADMIN->value ? 'selected' : '' ?>>Admin</option>
+                        </select>
                     <?php endif; ?>
                 </td>
                 <td style="padding: 16px; text-align: center;">
@@ -56,7 +59,7 @@ use Enums\Role;
                 </td>
                 <td style="padding: 16px;">
                     <div style="display: flex; justify-content: flex-end;">
-                        <button class="delete-btn" title="Delete User" <?= $isSelf ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : '' ?>>
+                        <button class="delete-btn delete-user-btn" data-id="<?= $user['id'] ?>" title="Delete User" <?= $isSelf ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : '' ?>>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                         </button>
                     </div>

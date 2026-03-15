@@ -111,4 +111,18 @@ class UserRepository extends Repository
             'user_id' => $userId
         ]);
     }
+
+    public function deleteUser(int $id): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM users WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function updateRole(int $id, Role $role): bool
+    {
+        $stmt = $this->db->prepare("UPDATE users SET role_id = :role_id WHERE id = :id");
+        $stmt->execute(['role_id' => $role->value, 'id' => $id]);
+        return $stmt->rowCount() > 0;
+    }
 }

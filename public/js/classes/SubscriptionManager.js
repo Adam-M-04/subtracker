@@ -7,7 +7,8 @@ export default class SubscriptionManager {
     initEvents() {
         document.addEventListener('click', (e) => {
             const deleteBtn = e.target.closest('.delete-btn');
-            if (deleteBtn) {
+
+            if (deleteBtn && !deleteBtn.classList.contains('delete-user-btn')) {
                 this.handleDelete(deleteBtn.dataset.id);
             }
 
