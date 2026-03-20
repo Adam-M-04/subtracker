@@ -699,7 +699,7 @@ td {
     transition: opacity 0.3s ease;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px) {@media (max-width: 768px) {
     .app-container {
         flex-direction: column;
     }
@@ -767,4 +767,16 @@ td {
         flex-direction: column;
         gap: 0;
     }
+
+    .modal-content {
+        margin: 16px;
+        width: calc(100% - 32px);
+        max-height: calc(100vh - 32px);
+        overflow-y: auto;
+    }
+}}
+
+.header-actions .btn-primary {
+    white-space: nowrap;
+    flex-shrink: 0;
 }

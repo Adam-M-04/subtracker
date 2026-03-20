@@ -2,15 +2,15 @@
 use Enums\Role;
 ?>
 
-<div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+<div class="page-header" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 24px;">
     <div>
-        <h2>Users Management</h2>
-        <p>Manage registered users and view their subscription statistics.</p>
+        <h2 style="margin-top: 0; margin-bottom: 8px;">Users Management</h2>
+        <p style="margin: 0;">Manage registered users and view their subscription statistics.</p>
     </div>
 </div>
 
-<div class="card" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
-    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+<div class="card" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow-x: auto; -webkit-overflow-scrolling: touch;">
+    <table style="width: 100%; min-width: 750px; border-collapse: collapse; text-align: left;">
         <thead style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color);">
         <tr>
             <th style="padding: 16px; font-weight: 500; color: var(--text-muted); font-size: 14px;">ID</th>
