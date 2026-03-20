@@ -9,9 +9,49 @@ use Enums\BillingCycle;
 use Enums\Currency;
 use Enums\Status;
 use PDO;
+use DateTime;
 
 class SubscriptionRepository extends Repository
 {
+    public function autoRenewSubscriptions(int $userId): void
+    {
+        // Pobieramy tylko te subskrypcje, które są aktywne (status 1) i ich data już minęła
+        $sql = "SELECT id, next_payment_date, billing_cycle_id FROM subscriptions 
+                WHERE user_id = :user_id AND status_id = 1 AND next_payment_date < CURRENT_DATE";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['user_id' => $userId]);
+        $overdue = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($overdue)) {
+            return; // Nie ma nic do aktualizacji
+        }
+
+        $updateStmt = $this->db->prepare("UPDATE subscriptions SET next_payment_date = :new_date WHERE id = :id");
+
+        $today = new DateTime();
+        $today->setTime(0, 0, 0);
+
+        foreach ($overdue as $sub) {
+            $paymentDate = new DateTime($sub['next_payment_date']);
+            $cycle = (int)$sub['billing_cycle_id'];
+
+            // Przesuwamy datę do przodu, aż będzie w przyszłości lub dzisiaj
+            while ($paymentDate < $today) {
+                if ($cycle === 1) { // Miesięcznie
+                    $paymentDate->modify('+1 month');
+                } else { // Rocznie
+                    $paymentDate->modify('+1 year');
+                }
+            }
+
+            $updateStmt->execute([
+                'new_date' => $paymentDate->format('Y-m-d'),
+                'id' => $sub['id']
+            ]);
+        }
+    }
+
     public function findAllByUserId(int $userId, string $search = ''): array
     {
         $sql = "SELECT * FROM subscriptions WHERE user_id = :user_id";

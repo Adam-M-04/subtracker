@@ -13,6 +13,7 @@ class HomeController extends Controller
         Auth::check();
 
         $repo = new SubscriptionRepository();
+        $repo->autoRenewSubscriptions(Auth::id());
         $subscriptions = $repo->findAllByUserId(Auth::id());
 
         $monthlyCost = 0;

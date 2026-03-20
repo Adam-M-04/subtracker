@@ -20,6 +20,9 @@ class SubscriptionController extends Controller
 
         $search = $_GET['q'] ?? '';
         $repo = new SubscriptionRepository();
+
+        $repo->autoRenewSubscriptions(Auth::id());
+
         $subscriptions = $repo->findAllByUserId(Auth::id(), $search);
 
         $this->render('subscriptions', [
