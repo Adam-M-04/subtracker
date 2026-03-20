@@ -16,8 +16,10 @@ $userName = Auth::name();
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
 <div class="app-container">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             SubTracker
@@ -45,10 +47,15 @@ $userName = Auth::name();
 
     <main class="main-content">
         <header class="top-header">
-            <h2>Overview</h2>
+            <div class="header-title-row">
+                <button id="mobileMenuBtn" class="hamburger-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <h2 style="margin: 0;">Overview</h2>
+            </div>
             <div class="header-actions">
-                <form action="/subscriptions" method="GET" style="margin: 0; display: flex;">
-                    <input type="text" name="q" class="search-bar" placeholder="Search subscriptions..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+                <form action="/subscriptions" method="GET" style="margin: 0; display: flex; width: 100%;">
+                    <input type="text" name="q" class="search-bar" placeholder="Search subscriptions..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" style="width: 100%;">
                 </form>
                 <button class="btn-primary" id="addSubscriptionBtn">+ Add Subscription</button>
             </div>

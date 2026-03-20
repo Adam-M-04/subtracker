@@ -3,6 +3,7 @@ import SubscriptionForm from './classes/SubscriptionForm.js';
 import SubscriptionManager from './classes/SubscriptionManager.js';
 import SubscriptionFilter from './classes/SubscriptionFilter.js';
 import UserManager from './classes/UserManager.js';
+import MobileMenu from './classes/MobileMenu.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const addSubModal = new Modal('addSubscriptionModal', 'addSubscriptionBtn', 'closeModalBtn', 'cancelModalBtn');
@@ -11,4 +12,5 @@ document.addEventListener('DOMContentLoaded', () => {
     new SubscriptionManager(subForm);
     new SubscriptionFilter();
     new UserManager();
+    new MobileMenu();
 });
