@@ -25,7 +25,7 @@ $userName = Auth::name();
 
         <ul class="nav-menu">
             <li><a href="/" class="nav-link <?= $currentUri === '/' ? 'active' : '' ?>">Dashboard</a></li>
-            <li><a href="/subscriptions" class="nav-link <?= $currentUri === '/subscriptions' ? 'active' : '' ?>">Subscriptions</a></li>
+            <li><a href="/subscriptions" class="nav-link <?= strpos($currentUri, '/subscriptions') === 0 ? 'active' : '' ?>">Subscriptions</a></li>
 
             <?php if ($role === Role::ADMIN): ?>
                 <li><a href="/users" class="nav-link <?= $currentUri === '/users' ? 'active' : '' ?>">Users</a></li>
@@ -47,7 +47,9 @@ $userName = Auth::name();
         <header class="top-header">
             <h2>Overview</h2>
             <div class="header-actions">
-                <input type="text" class="search-bar" placeholder="Search subscriptions...">
+                <form action="/subscriptions" method="GET" style="margin: 0; display: flex;">
+                    <input type="text" name="q" class="search-bar" placeholder="Search subscriptions..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+                </form>
                 <button class="btn-primary" id="addSubscriptionBtn">+ Add Subscription</button>
             </div>
         </header>

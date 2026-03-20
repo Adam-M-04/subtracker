@@ -4,52 +4,31 @@ namespace Repositories;
 
 use Core\Repository;
 use Entities\Subscription;
-use Enums\BillingCycle;
 use Enums\Category;
+use Enums\BillingCycle;
 use Enums\Currency;
 use Enums\Status;
 use PDO;
 
 class SubscriptionRepository extends Repository
 {
-    public function save(Subscription $subscription): bool
+    public function findAllByUserId(int $userId, string $search = ''): array
     {
-        $sql = "INSERT INTO subscriptions 
-                (user_id, name, price, currency_id, billing_cycle_id, category_id, next_payment_date, status_id) 
-                VALUES 
-                (:user_id, :name, :price, :currency_id, :billing_cycle_id, :category_id, :next_payment_date, :status_id) 
-                RETURNING id";
+        $sql = "SELECT * FROM subscriptions WHERE user_id = :user_id";
+        $params = ['user_id' => $userId];
 
-        $stmt = $this->db->prepare($sql);
-
-        $success = $stmt->execute([
-            'user_id' => $subscription->getUserId(),
-            'name' => $subscription->getName(),
-            'price' => $subscription->getPrice(),
-            'currency_id' => $subscription->getCurrency()->value,
-            'billing_cycle_id' => $subscription->getBillingCycle()->value,
-            'category_id' => $subscription->getCategory()->value,
-            'next_payment_date' => $subscription->getNextPaymentDate(),
-            'status_id' => $subscription->getStatus()->value
-        ]);
-
-        if ($success) {
-            $subscription->setId($stmt->fetchColumn());
-            return true;
+        if ($search !== '') {
+            $sql .= " AND name ILIKE :search";
+            $params['search'] = '%' . $search . '%';
         }
 
-        return false;
-    }
+        $sql .= " ORDER BY next_payment_date ASC";
 
-    public function findAllByUserId(int $userId): array
-    {
-        $stmt = $this->db->prepare("SELECT * FROM subscriptions WHERE user_id = :user_id ORDER BY next_payment_date ASC");
-        $stmt->execute(['user_id' => $userId]);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
 
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $subscriptions = [];
-
-        foreach ($results as $row) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $sub = new Subscription();
             $sub->setId($row['id'])
                 ->setUserId($row['user_id'])
@@ -58,8 +37,8 @@ class SubscriptionRepository extends Repository
                 ->setCurrency(Currency::from($row['currency_id']))
                 ->setBillingCycle(BillingCycle::from($row['billing_cycle_id']))
                 ->setCategory(Category::from($row['category_id']))
-                ->setNextPaymentDate($row['next_payment_date'])
-                ->setStatus(Status::from($row['status_id']));
+                ->setStatus(Status::from($row['status_id']))
+                ->setNextPaymentDate($row['next_payment_date']);
 
             $subscriptions[] = $sub;
         }
@@ -67,16 +46,22 @@ class SubscriptionRepository extends Repository
         return $subscriptions;
     }
 
-    public function delete(int $id, int $userId): bool
+    public function save(Subscription $subscription): bool
     {
-        $stmt = $this->db->prepare("DELETE FROM subscriptions WHERE id = :id AND user_id = :user_id");
-        $stmt->execute([
-            'id' => $id,
-            'user_id' => $userId
-        ]);
+        $sql = "INSERT INTO subscriptions (user_id, name, price, currency_id, billing_cycle_id, category_id, next_payment_date) 
+                VALUES (:user_id, :name, :price, :currency_id, :billing_cycle_id, :category_id, :next_payment_date)";
 
-        // Returns true only if a row was actually deleted
-        return $stmt->rowCount() > 0;
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'user_id' => $subscription->getUserId(),
+            'name' => $subscription->getName(),
+            'price' => $subscription->getPrice(),
+            'currency_id' => $subscription->getCurrency()->value,
+            'billing_cycle_id' => $subscription->getBillingCycle()->value,
+            'category_id' => $subscription->getCategory()->value,
+            'next_payment_date' => $subscription->getNextPaymentDate()
+        ]);
     }
 
     public function update(Subscription $subscription): bool
@@ -101,6 +86,18 @@ class SubscriptionRepository extends Repository
             'next_payment_date' => $subscription->getNextPaymentDate(),
             'id' => $subscription->getId(),
             'user_id' => $subscription->getUserId()
+        ]);
+
+        return $stmt->rowCount() > 0;
+    }
+
+    public function delete(int $id, int $userId): bool
+    {
+        $sql = "DELETE FROM subscriptions WHERE id = :id AND user_id = :user_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'id' => $id,
+            'user_id' => $userId
         ]);
 
         return $stmt->rowCount() > 0;
