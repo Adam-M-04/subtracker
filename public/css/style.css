@@ -699,7 +699,7 @@ td {
     transition: opacity 0.3s ease;
 }
 
-@media (max-width: 768px) {@media (max-width: 768px) {
+@media (max-width: 768px) {
     .app-container {
         flex-direction: column;
     }
@@ -774,7 +774,12 @@ td {
         max-height: calc(100vh - 32px);
         overflow-y: auto;
     }
-}}
+
+    .auth-container {
+        margin: 16px;
+        width: calc(100% - 32px);
+    }
+}
 
 .header-actions .btn-primary {
     white-space: nowrap;
