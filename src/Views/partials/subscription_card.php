@@ -2,12 +2,14 @@
 use Enums\Status;
 use Enums\BillingCycle;
 use Services\CurrencyConverter;
+use Services\LogoService;
 use Enums\Currency;
 use Core\Auth;
 
 $isActive = $sub->getStatus() === Status::ACTIVE;
 $targetCurrency = Currency::from(Auth::currencyId());
 $normalizedPrice = CurrencyConverter::convert($sub->getPrice(), $sub->getCurrency(), $targetCurrency);
+$logoUrl = LogoService::getLogoUrl($sub->getName());
 
 $subJson = htmlspecialchars(json_encode([
         'id' => $sub->getId(),
@@ -23,12 +25,20 @@ $subJson = htmlspecialchars(json_encode([
 <div class="sub-card" data-category="<?= strtolower($sub->getCategory()->name) ?>" data-date="<?= $sub->getNextPaymentDate() ?>" data-price="<?= $normalizedPrice ?>" style="<?= !$isActive ? 'opacity: 0.6;' : '' ?>">
     <div class="sub-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <div style="display: flex; align-items: center; gap: 12px;">
-            <div class="sub-logo" style="background: var(--primary-color); color: white; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; flex-shrink: 0;">
-                <?= strtoupper(substr($sub->getName(), 0, 1)) ?>
-            </div>
+
+            <?php if ($logoUrl): ?>
+                <div style="width: 44px; height: 44px; min-width: 44px; min-height: 44px; flex-shrink: 0; border-radius: 12px; background-color: #ffffff; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                    <img src="<?= htmlspecialchars($logoUrl) ?>" alt="<?= htmlspecialchars($sub->getName()) ?>" style="width: 32px; height: 32px; object-fit: contain; display: block;">
+                </div>
+            <?php else: ?>
+                <div style="background: var(--primary-color); color: white; width: 44px; height: 44px; min-width: 44px; min-height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">
+                    <?= strtoupper(substr($sub->getName(), 0, 1)) ?>
+                </div>
+            <?php endif; ?>
+
             <div style="display: flex; flex-direction: column; justify-content: center;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 16px; font-weight: 600; color: #fff;"><?= htmlspecialchars($sub->getName()) ?></span>
+                    <span class="sub-name" style="font-size: 16px; font-weight: 600; color: #fff;"><?= htmlspecialchars($sub->getName()) ?></span>
                     <?php if ($isActive): ?>
                         <span class="status-badge" style="padding: 2px 6px; font-size: 11px;">Active</span>
                     <?php else: ?>
