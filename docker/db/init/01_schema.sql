@@ -47,13 +47,3 @@ CREATE TABLE subscriptions (
    next_payment_date DATE NOT NULL,
    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-INSERT INTO users (id, email, password_hash, role_id) VALUES
-   (1, 'admin@subtracker.pl', '$2y$12$O09tQc.CRVyKcIotGrXeUO5fCVH2pCX9Ka/cL4gooKmvsGa5m7g8.', 2),
-   (2, 'user@subtracker.pl', '$2y$12$SiaZwwq5Azke6QW9YoowouuLjIA8Y8B5L6w3rY8Ufi.f0gdpwD/H6', 1);
-
-INSERT INTO user_profiles (user_id, first_name, last_name, currency_id) VALUES
-    (1, 'System', 'Admin', 3),
-    (2, 'Alex', 'Morgan', 1);
-
-SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
