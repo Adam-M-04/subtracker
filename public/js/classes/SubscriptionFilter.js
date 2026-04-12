@@ -1,5 +1,6 @@
 export default class SubscriptionFilter {
     constructor() {
+        this.statusFilter = document.getElementById('statusFilter');
         this.categoryFilter = document.getElementById('categoryFilter');
         this.sortFilter = document.getElementById('sortFilter');
         this.grid = document.querySelector('.subs-grid');
@@ -10,6 +11,9 @@ export default class SubscriptionFilter {
     }
 
     initEvents() {
+        if (this.statusFilter) {
+            this.statusFilter.addEventListener('change', () => this.filterAndSort());
+        }
         if (this.categoryFilter) {
             this.categoryFilter.addEventListener('change', () => this.filterAndSort());
         }
@@ -19,15 +23,17 @@ export default class SubscriptionFilter {
     }
 
     filterAndSort() {
+        const status = this.statusFilter ? this.statusFilter.value : 'all';
         const category = this.categoryFilter ? this.categoryFilter.value : 'all';
         const sortMethod = this.sortFilter ? this.sortFilter.value : null;
 
         const cards = Array.from(this.grid.querySelectorAll('.sub-card'));
 
         cards.forEach(card => {
+            const matchesStatus = status === 'all' || card.dataset.status === status;
             const matchesCategory = category === 'all' || card.dataset.category === category;
 
-            if (matchesCategory) {
+            if (matchesStatus && matchesCategory) {
                 card.style.display = '';
             } else {
                 card.style.display = 'none';

@@ -24,7 +24,7 @@ class SubscriptionController extends Controller
 
         $repo->autoRenewSubscriptions(Auth::id());
 
-        $subscriptions = $repo->findAllByUserId(Auth::id(), $search);
+        $subscriptions = $repo->findAllByUserId(Auth::id(), $search, true);
 
         $this->render('subscriptions', [
             'title' => 'My Subscriptions - SubTracker',

@@ -8,8 +8,14 @@ use Enums\BillingCycle;
         <h2 style="margin-top: 0; margin-bottom: 8px;">All Subscriptions</h2>
         <p style="margin: 0;">Manage your active and past subscriptions in one place.</p>
     </div>
-    <div style="display: flex; gap: 10px; flex-wrap: wrap; flex: 1; min-width: 250px; justify-content: flex-end;">
-        <select id="categoryFilter" class="form-control" style="flex: 1; min-width: 140px; max-width: 200px;">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; flex: 2; justify-content: flex-end;">
+        <select id="statusFilter" class="form-control" style="flex: 1; min-width: 130px; max-width: 180px;">
+            <option value="all">All Statuses</option>
+            <option value="1">Active</option>
+            <option value="2">Paused</option>
+            <option value="3">Inactive</option>
+        </select>
+        <select id="categoryFilter" class="form-control" style="flex: 1; min-width: 140px; max-width: 180px;">
             <option value="all">All Categories</option>
             <option value="entertainment">Entertainment</option>
             <option value="productivity">Productivity</option>
@@ -17,7 +23,7 @@ use Enums\BillingCycle;
             <option value="software">Software</option>
             <option value="general">General</option>
         </select>
-        <select id="sortFilter" class="form-control" style="flex: 1; min-width: 140px; max-width: 200px;">
+        <select id="sortFilter" class="form-control" style="flex: 1; min-width: 160px; max-width: 200px;">
             <option value="date_asc">Date: Nearest first</option>
             <option value="date_desc">Date: Furthest first</option>
             <option value="price_desc">Price: Highest first</option>

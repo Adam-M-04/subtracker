@@ -49,10 +49,14 @@ class SubscriptionRepository extends Repository
         }
     }
 
-    public function findAllByUserId(int $userId, string $search = ''): array
+    public function findAllByUserId(int $userId, string $search = '', bool $includeInactive = false): array
     {
-        $sql = "SELECT * FROM subscriptions WHERE user_id = :user_id AND status_id != 3";
+        $sql = "SELECT * FROM subscriptions WHERE user_id = :user_id";
         $params = ['user_id' => $userId];
+
+        if (!$includeInactive) {
+            $sql .= " AND status_id != 3";
+        }
 
         if ($search !== '') {
             $sql .= " AND name ILIKE :search";
@@ -65,16 +69,16 @@ class SubscriptionRepository extends Repository
         $stmt->execute($params);
 
         $subscriptions = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $sub = new Subscription();
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $sub = new \Entities\Subscription();
             $sub->setId($row['id'])
                 ->setUserId($row['user_id'])
                 ->setName($row['name'])
                 ->setPrice((float)$row['price'])
-                ->setCurrency(Currency::from($row['currency_id']))
-                ->setBillingCycle(BillingCycle::from($row['billing_cycle_id']))
-                ->setCategory(Category::from($row['category_id']))
-                ->setStatus(Status::from($row['status_id']))
+                ->setCurrency(\Enums\Currency::from($row['currency_id']))
+                ->setBillingCycle(\Enums\BillingCycle::from($row['billing_cycle_id']))
+                ->setCategory(\Enums\Category::from($row['category_id']))
+                ->setStatus(\Enums\Status::from($row['status_id']))
                 ->setNextPaymentDate($row['next_payment_date']);
 
             $subscriptions[] = $sub;
