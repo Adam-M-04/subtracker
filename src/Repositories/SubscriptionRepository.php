@@ -15,7 +15,6 @@ class SubscriptionRepository extends Repository
 {
     public function autoRenewSubscriptions(int $userId): void
     {
-        // Pobieramy tylko te subskrypcje, które są aktywne (status 1) i ich data już minęła
         $sql = "SELECT id, next_payment_date, billing_cycle_id FROM subscriptions 
                 WHERE user_id = :user_id AND status_id = 1 AND next_payment_date < CURRENT_DATE";
 
@@ -24,11 +23,10 @@ class SubscriptionRepository extends Repository
         $overdue = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (empty($overdue)) {
-            return; // Nie ma nic do aktualizacji
+            return;
         }
 
         $updateStmt = $this->db->prepare("UPDATE subscriptions SET next_payment_date = :new_date WHERE id = :id");
-
         $today = new DateTime();
         $today->setTime(0, 0, 0);
 
@@ -36,11 +34,10 @@ class SubscriptionRepository extends Repository
             $paymentDate = new DateTime($sub['next_payment_date']);
             $cycle = (int)$sub['billing_cycle_id'];
 
-            // Przesuwamy datę do przodu, aż będzie w przyszłości lub dzisiaj
             while ($paymentDate < $today) {
-                if ($cycle === 1) { // Miesięcznie
+                if ($cycle === 1) {
                     $paymentDate->modify('+1 month');
-                } else { // Rocznie
+                } else {
                     $paymentDate->modify('+1 year');
                 }
             }
@@ -54,7 +51,7 @@ class SubscriptionRepository extends Repository
 
     public function findAllByUserId(int $userId, string $search = ''): array
     {
-        $sql = "SELECT * FROM subscriptions WHERE user_id = :user_id";
+        $sql = "SELECT * FROM subscriptions WHERE user_id = :user_id AND status_id != 3";
         $params = ['user_id' => $userId];
 
         if ($search !== '') {
@@ -88,8 +85,8 @@ class SubscriptionRepository extends Repository
 
     public function save(Subscription $subscription): bool
     {
-        $sql = "INSERT INTO subscriptions (user_id, name, price, currency_id, billing_cycle_id, category_id, next_payment_date) 
-                VALUES (:user_id, :name, :price, :currency_id, :billing_cycle_id, :category_id, :next_payment_date)";
+        $sql = "INSERT INTO subscriptions (user_id, name, price, currency_id, billing_cycle_id, category_id, status_id, next_payment_date) 
+                VALUES (:user_id, :name, :price, :currency_id, :billing_cycle_id, :category_id, :status_id, :next_payment_date)";
 
         $stmt = $this->db->prepare($sql);
 
@@ -100,6 +97,7 @@ class SubscriptionRepository extends Repository
             'currency_id' => $subscription->getCurrency()->value,
             'billing_cycle_id' => $subscription->getBillingCycle()->value,
             'category_id' => $subscription->getCategory()->value,
+            'status_id' => $subscription->getStatus()->value,
             'next_payment_date' => $subscription->getNextPaymentDate()
         ]);
     }
@@ -112,6 +110,7 @@ class SubscriptionRepository extends Repository
                 currency_id = :currency_id, 
                 billing_cycle_id = :billing_cycle_id, 
                 category_id = :category_id, 
+                status_id = :status_id,
                 next_payment_date = :next_payment_date
                 WHERE id = :id AND user_id = :user_id";
 
@@ -123,12 +122,23 @@ class SubscriptionRepository extends Repository
             'currency_id' => $subscription->getCurrency()->value,
             'billing_cycle_id' => $subscription->getBillingCycle()->value,
             'category_id' => $subscription->getCategory()->value,
+            'status_id' => $subscription->getStatus()->value,
             'next_payment_date' => $subscription->getNextPaymentDate(),
             'id' => $subscription->getId(),
             'user_id' => $subscription->getUserId()
         ]);
 
         return $stmt->rowCount() > 0;
+    }
+
+    public function updateStatus(int $id, int $userId, Status $status): bool
+    {
+        $stmt = $this->db->prepare("UPDATE subscriptions SET status_id = :status_id WHERE id = :id AND user_id = :user_id");
+        return $stmt->execute([
+            'status_id' => $status->value,
+            'id' => $id,
+            'user_id' => $userId
+        ]);
     }
 
     public function delete(int $id, int $userId): bool

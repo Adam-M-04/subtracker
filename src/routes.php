@@ -13,6 +13,7 @@ $router->get('/subscriptions', 'Controllers\SubscriptionController', 'index');
 $router->post('/api/subscriptions', 'Controllers\SubscriptionController', 'store');
 $router->post('/api/subscriptions/update', 'Controllers\SubscriptionController', 'update');
 $router->post('/api/subscriptions/delete', 'Controllers\SubscriptionController', 'delete');
+$router->post('/api/subscriptions/status', 'Controllers\SubscriptionController', 'updateStatus');
 
 $router->get('/users', 'Controllers\UserController', 'index');
 $router->post('/api/users/delete', 'Controllers\UserController', 'delete');

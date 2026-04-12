@@ -50,7 +50,18 @@ $subJson = htmlspecialchars(json_encode([
                 <span style="color: var(--text-muted); font-size: 13px; margin-top: 2px;"><?= ucfirst(strtolower($sub->getCategory()->name)) ?></span>
             </div>
         </div>
-        <div style="display: flex; gap: 4px;">
+        <div style="display: flex; gap: 4px; align-items: center;">
+            <?php
+            $toggleStatus = $isActive ? Status::PAUSED->value : Status::ACTIVE->value;
+            $toggleTitle = $isActive ? 'Pause' : 'Resume';
+            ?>
+            <button class="toggle-status-btn" data-id="<?= $sub->getId() ?>" data-status="<?= $toggleStatus ?>" title="<?= $toggleTitle ?>" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; transition: color 0.2s;">
+                <?php if ($isActive): ?>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                <?php else: ?>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <?php endif; ?>
+            </button>
             <button class="edit-btn" data-sub="<?= $subJson ?>" title="Edit">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
             </button>

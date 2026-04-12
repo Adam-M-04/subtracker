@@ -9,6 +9,7 @@ use Entities\Subscription;
 use Enums\Category;
 use Enums\BillingCycle;
 use Enums\Currency;
+use Enums\Status;
 use Repositories\SubscriptionRepository;
 use Exception;
 
@@ -54,6 +55,7 @@ class SubscriptionController extends Controller
                 ->setCurrency(Currency::from((int)($input['currency'] ?? 1)))
                 ->setBillingCycle(BillingCycle::from((int)($input['billingCycle'] ?? 1)))
                 ->setCategory(Category::from((int)($input['category'] ?? 5)))
+                ->setStatus(Status::from((int)($input['status'] ?? 1)))
                 ->setNextPaymentDate(htmlspecialchars($input['next_payment_date']));
 
             $repo = new SubscriptionRepository();
@@ -91,6 +93,7 @@ class SubscriptionController extends Controller
                 ->setCurrency(Currency::from((int)($input['currency'] ?? 1)))
                 ->setBillingCycle(BillingCycle::from((int)($input['billingCycle'] ?? 1)))
                 ->setCategory(Category::from((int)($input['category'] ?? 5)))
+                ->setStatus(Status::from((int)($input['status'] ?? 1)))
                 ->setNextPaymentDate(htmlspecialchars($input['next_payment_date']));
 
             $repo = new SubscriptionRepository();
@@ -121,10 +124,34 @@ class SubscriptionController extends Controller
 
         $repo = new SubscriptionRepository();
 
-        if ($repo->delete((int)$input['id'], Auth::id())) {
-            JsonResponse::send('success', 'Subscription deleted successfully');
+        if ($repo->updateStatus((int)$input['id'], Auth::id(), Status::INACTIVE)) {
+            JsonResponse::send('success', 'Subscription moved to history');
         } else {
-            JsonResponse::send('error', 'Failed to delete subscription', [], 500);
+            JsonResponse::send('error', 'Operation failed', [], 500);
+        }
+    }
+
+    public function updateStatus(): void
+    {
+        Auth::check();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            JsonResponse::send('error', 'Method not allowed', [], 405);
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        if (empty($input['id']) || empty($input['status'])) {
+            JsonResponse::send('error', 'Missing data', [], 400);
+        }
+
+        $repo = new SubscriptionRepository();
+        $status = Status::from((int)$input['status']);
+
+        if ($repo->updateStatus((int)$input['id'], Auth::id(), $status)) {
+            JsonResponse::send('success', 'Status updated successfully');
+        } else {
+            JsonResponse::send('error', 'Failed to update status', [], 500);
         }
     }
 }

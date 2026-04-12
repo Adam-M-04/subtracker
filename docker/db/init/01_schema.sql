@@ -14,7 +14,10 @@ CREATE TABLE billing_cycles (id SERIAL PRIMARY KEY, name VARCHAR(20) NOT NULL);
 INSERT INTO billing_cycles (id, name) VALUES (1, 'Monthly'), (2, 'Yearly');
 
 CREATE TABLE statuses (id SERIAL PRIMARY KEY, name VARCHAR(20) NOT NULL);
-INSERT INTO statuses (id, name) VALUES (1, 'Active'), (2, 'Canceled');
+INSERT INTO statuses (id, name) VALUES
+    (1, 'Active'),
+    (2, 'Paused'),
+    (3, 'Inactive');
 
 -- TABELE GŁÓWNE
 CREATE TABLE users (
