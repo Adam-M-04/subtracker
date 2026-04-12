@@ -63,22 +63,22 @@ class SubscriptionRepository extends Repository
             $params['search'] = '%' . $search . '%';
         }
 
-        $sql .= " ORDER BY next_payment_date ASC";
+        $sql .= " ORDER BY CASE WHEN status_id = 3 THEN 1 ELSE 0 END, next_payment_date ASC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
 
         $subscriptions = [];
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $sub = new \Entities\Subscription();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $sub = new Subscription();
             $sub->setId($row['id'])
                 ->setUserId($row['user_id'])
                 ->setName($row['name'])
                 ->setPrice((float)$row['price'])
-                ->setCurrency(\Enums\Currency::from($row['currency_id']))
-                ->setBillingCycle(\Enums\BillingCycle::from($row['billing_cycle_id']))
-                ->setCategory(\Enums\Category::from($row['category_id']))
-                ->setStatus(\Enums\Status::from($row['status_id']))
+                ->setCurrency(Currency::from($row['currency_id']))
+                ->setBillingCycle(BillingCycle::from($row['billing_cycle_id']))
+                ->setCategory(Category::from($row['category_id']))
+                ->setStatus(Status::from($row['status_id']))
                 ->setNextPaymentDate($row['next_payment_date']);
 
             $subscriptions[] = $sub;

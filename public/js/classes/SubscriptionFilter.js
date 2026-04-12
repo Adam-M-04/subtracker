@@ -44,6 +44,12 @@ export default class SubscriptionFilter {
             const visibleCards = cards.filter(card => card.style.display !== 'none');
 
             visibleCards.sort((a, b) => {
+                const statusA = a.dataset.status;
+                const statusB = b.dataset.status;
+
+                if (statusA === '3' && statusB !== '3') return 1;
+                if (statusA !== '3' && statusB === '3') return -1;
+
                 if (sortMethod.startsWith('date')) {
                     const dateA = new Date(a.dataset.date).getTime();
                     const dateB = new Date(b.dataset.date).getTime();
