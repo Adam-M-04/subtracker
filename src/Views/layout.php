@@ -1,5 +1,6 @@
 <?php
 use Core\Auth;
+use Core\Csrf;
 use Enums\Role;
 
 $currentUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -12,6 +13,7 @@ $userName = Auth::name();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::token()) ?>">
     <title><?= htmlspecialchars($title ?? 'SubTracker') ?></title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -131,6 +133,11 @@ $userName = Auth::name();
     </div>
 </div>
 
+<script>
+    window.AppConfig = {
+        csrfToken: <?= json_encode(Csrf::token()) ?>
+    };
+</script>
 <script type="module" src="/js/app.js"></script>
 </body>
 </html>

@@ -5,14 +5,25 @@ namespace Core;
 use Entities\User;
 use Enums\Role;
 
+use Controllers\ErrorController;
+
 class Auth
 {
+    public static function start(): void
+    {
+        self::startSession();
+    }
+
     public static function check(): void
     {
         self::startSession();
 
         if (!self::id()) {
-            header("Location: /login");
+            if (self::isApiRequest()) {
+                JsonResponse::send('error', 'Unauthorized', [], 401);
+            }
+
+            header('Location: /login');
             exit;
         }
     }
@@ -22,7 +33,12 @@ class Auth
         self::check();
 
         if (self::role() !== Role::ADMIN) {
-            header("Location: /");
+            if (self::isApiRequest()) {
+                JsonResponse::send('error', 'Forbidden', [], 403);
+            }
+
+            http_response_code(403);
+            (new ErrorController())->forbidden();
             exit;
         }
     }
@@ -30,6 +46,7 @@ class Auth
     public static function login(User $user, array $profile = []): void
     {
         self::startSession();
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $user->getId();
         $_SESSION['user_email'] = $user->getEmail();
         $_SESSION['user_role'] = $user->getRole()->value;
@@ -44,6 +61,11 @@ class Auth
         self::startSession();
         session_unset();
         session_destroy();
+
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], (bool)$params['secure'], (bool)$params['httponly']);
+        }
     }
 
     public static function id(): ?int
@@ -79,7 +101,22 @@ class Auth
     private static function startSession(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
+            $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || getenv('SESSION_COOKIE_SECURE') === '1';
+            session_set_cookie_params([
+                'lifetime' => 0,
+                'path' => '/',
+                'domain' => '',
+                'secure' => $secure,
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
             session_start();
         }
+    }
+
+    private static function isApiRequest(): bool
+    {
+        $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
+        return str_starts_with($uri, '/api/');
     }
 }

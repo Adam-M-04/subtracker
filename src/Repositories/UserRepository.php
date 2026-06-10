@@ -32,7 +32,7 @@ class UserRepository extends Repository
     public function save(User $user, string $firstName = '', string $lastName = ''): bool
     {
         try {
-            $this->db->beginTransaction();
+            $this->beginTransaction('READ COMMITTED');
 
             $stmt = $this->db->prepare("INSERT INTO users (email, password_hash, role_id) VALUES (:email, :password_hash, :role_id) RETURNING id");
 
@@ -53,14 +53,16 @@ class UserRepository extends Repository
                     'last_name' => $lastName
                 ]);
 
-                $this->db->commit();
+                $this->commit();
                 return true;
             }
 
-            $this->db->rollBack();
+            $this->rollBack();
             return false;
         } catch (Exception $e) {
-            $this->db->rollBack();
+            if ($this->db->inTransaction()) {
+                $this->rollBack();
+            }
             return false;
         }
     }

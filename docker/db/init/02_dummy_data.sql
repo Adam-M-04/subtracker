@@ -45,4 +45,11 @@ DO $$
                (v_admin_id, 'Canva', 12.99, 1, 1, 4, 3, CURRENT_DATE - INTERVAL '100 days'),
                (v_admin_id, 'Gym Pass', 120.00, 3, 1, 5, 3, CURRENT_DATE - INTERVAL '30 days');
 
+        INSERT INTO subscription_tags (subscription_id, tag_id)
+        SELECT s.id, t.id
+        FROM subscriptions s
+        JOIN tags t ON t.name IN ('Work', 'Entertainment')
+        WHERE s.user_id = v_admin_id
+          AND s.name IN ('Adobe', 'Netflix');
+
     END $$;

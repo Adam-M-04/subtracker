@@ -6,9 +6,7 @@ class Controller
 {
     public function __construct()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        Auth::start();
     }
 
     protected function render(string $view, array $data = []): void
@@ -23,13 +21,13 @@ class Controller
 
             $layoutFile = __DIR__ . '/../Views/layout.php';
 
-            if (file_exists($layoutFile) && !in_array($view, ['login', 'register', '404'])) {
+            if (file_exists($layoutFile) && !in_array($view, ['login', 'register', '400', '401', '403', '404', '500'])) {
                 require $layoutFile;
             } else {
                 echo $content;
             }
         } else {
-            die("Błąd systemu: Nie znaleziono pliku widoku {$viewFile}");
+            throw new \RuntimeException('View not found: ' . $view);
         }
     }
 
@@ -37,5 +35,20 @@ class Controller
     {
         header("Location: $url");
         exit;
+    }
+
+    protected function validateCsrf(bool $json = false): bool
+    {
+        if (Csrf::validate(Csrf::tokenFromRequest())) {
+            return true;
+        }
+
+        if ($json) {
+            JsonResponse::send('error', 'Invalid CSRF token', [], 403);
+        }
+
+        http_response_code(403);
+        (new \Controllers\ErrorController())->forbidden();
+        return false;
     }
 }

@@ -23,12 +23,15 @@ export default class UserManager {
             return;
         }
 
+        const csrfToken = window.AppConfig?.csrfToken || '';
+
         try {
             const response = await fetch('/api/users/delete', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': csrfToken
                 },
                 body: JSON.stringify({ id: id })
             });
@@ -47,12 +50,14 @@ export default class UserManager {
     }
 
     async handleRoleChange(id, newRole) {
+        const csrfToken = window.AppConfig?.csrfToken || '';
         try {
             const response = await fetch('/api/users/role', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': csrfToken
                 },
                 body: JSON.stringify({ id: id, role: newRole })
             });

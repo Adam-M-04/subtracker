@@ -1,0 +1,1 @@
+{"version":2,"defects":[],"times":{"Tests\\Unit\\CurrencyConverterTest::testConvertReturnsSameAmountForSameCurrency":0.002,"Tests\\Unit\\CurrencyConverterTest::testConvertReturnsPositiveAmountForDifferentCurrencies":0.142}}

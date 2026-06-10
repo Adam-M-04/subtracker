@@ -38,6 +38,7 @@ export default class SubscriptionForm {
 
     async handleSubmit(e) {
         e.preventDefault();
+        const csrfToken = window.AppConfig?.csrfToken || '';
 
         const submitBtn = this.form.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
@@ -61,7 +62,8 @@ export default class SubscriptionForm {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': csrfToken
                 },
                 body: JSON.stringify(formData)
             });

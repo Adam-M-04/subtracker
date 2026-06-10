@@ -1,8 +1,11 @@
+<?php use Core\Csrf; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::token()) ?>">
     <title>Log in - SubTracker</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -24,6 +27,7 @@
         <?php endif; ?>
 
         <form action="/login" method="POST" id="authForm">
+            <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" class="form-control" placeholder="name@company.com" required autofocus>

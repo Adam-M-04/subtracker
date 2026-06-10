@@ -1,3 +1,5 @@
+<?php use Core\Csrf; ?>
+
 <div class="page-header" style="margin-bottom: 24px;">
     <h2>Account Settings</h2>
     <p>Update your personal information and application preferences.</p>
@@ -19,6 +21,7 @@
     <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 18px; color: #fff;">Profile Information</h3>
 
     <form action="/settings" method="POST">
+        <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
         <div class="form-row">
             <div class="form-group">
                 <label for="first_name">First Name</label>

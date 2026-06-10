@@ -1,8 +1,11 @@
+<?php use Core\Csrf; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::token()) ?>">
     <title>Create an Account - SubTracker</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -23,6 +26,7 @@
         <?php endif; ?>
 
         <form action="/register" method="POST" id="authForm">
+            <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
             <div class="form-row">
                 <div class="form-group">
                     <label for="first_name">First Name</label>

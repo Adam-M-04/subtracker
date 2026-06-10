@@ -41,6 +41,10 @@ class SubscriptionController extends Controller
             JsonResponse::send('error', 'Method not allowed', [], 405);
         }
 
+        if (!$this->validateCsrf(true)) {
+            return;
+        }
+
         $input = json_decode(file_get_contents('php://input'), true);
 
         if (empty($input['name']) || empty($input['price']) || empty($input['next_payment_date'])) {
@@ -66,7 +70,8 @@ class SubscriptionController extends Controller
                 JsonResponse::send('error', 'Failed to save subscription', [], 500);
             }
         } catch (Exception $e) {
-            JsonResponse::send('error', 'Server error: ' . $e->getMessage(), [], 500);
+            error_log('[store_subscription] ' . $e->getMessage());
+            JsonResponse::send('error', 'Server error', [], 500);
         }
     }
 
@@ -76,6 +81,10 @@ class SubscriptionController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             JsonResponse::send('error', 'Method not allowed', [], 405);
+        }
+
+        if (!$this->validateCsrf(true)) {
+            return;
         }
 
         $input = json_decode(file_get_contents('php://input'), true);
@@ -104,7 +113,8 @@ class SubscriptionController extends Controller
                 JsonResponse::send('error', 'Failed to update subscription', [], 500);
             }
         } catch (Exception $e) {
-            JsonResponse::send('error', 'Server error: ' . $e->getMessage(), [], 500);
+            error_log('[update_subscription] ' . $e->getMessage());
+            JsonResponse::send('error', 'Server error', [], 500);
         }
     }
 
@@ -114,6 +124,10 @@ class SubscriptionController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             JsonResponse::send('error', 'Method not allowed', [], 405);
+        }
+
+        if (!$this->validateCsrf(true)) {
+            return;
         }
 
         $input = json_decode(file_get_contents('php://input'), true);
@@ -137,6 +151,10 @@ class SubscriptionController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             JsonResponse::send('error', 'Method not allowed', [], 405);
+        }
+
+        if (!$this->validateCsrf(true)) {
+            return;
         }
 
         $input = json_decode(file_get_contents('php://input'), true);

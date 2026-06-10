@@ -32,6 +32,10 @@ class UserController extends Controller
             JsonResponse::send('error', 'Method not allowed', [], 405);
         }
 
+        if (!$this->validateCsrf(true)) {
+            return;
+        }
+
         $input = json_decode(file_get_contents('php://input'), true);
         $userId = (int)($input['id'] ?? 0);
 
@@ -58,6 +62,10 @@ class UserController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             JsonResponse::send('error', 'Method not allowed', [], 405);
+        }
+
+        if (!$this->validateCsrf(true)) {
+            return;
         }
 
         $input = json_decode(file_get_contents('php://input'), true);

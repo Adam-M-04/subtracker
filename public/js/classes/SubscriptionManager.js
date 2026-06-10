@@ -30,6 +30,7 @@ export default class SubscriptionManager {
     }
 
     async handleSubmit() {
+        const csrfToken = window.AppConfig?.csrfToken || '';
         const isEdit = this.subForm.subIdInput.value !== '';
         const url = isEdit ? '/api/subscriptions/update' : '/api/subscriptions';
 
@@ -49,7 +50,8 @@ export default class SubscriptionManager {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': csrfToken
                 },
                 body: JSON.stringify(payload)
             });
@@ -68,12 +70,14 @@ export default class SubscriptionManager {
     }
 
     async handleStatusToggle(id, newStatus) {
+        const csrfToken = window.AppConfig?.csrfToken || '';
         try {
             const response = await fetch('/api/subscriptions/status', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': csrfToken
                 },
                 body: JSON.stringify({ id: id, status: newStatus })
             });
@@ -96,12 +100,14 @@ export default class SubscriptionManager {
             return;
         }
 
+        const csrfToken = window.AppConfig?.csrfToken || '';
         try {
             const response = await fetch('/api/subscriptions/delete', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': csrfToken
                 },
                 body: JSON.stringify({ id: id })
             });

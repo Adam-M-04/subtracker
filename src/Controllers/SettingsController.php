@@ -32,12 +32,27 @@ class SettingsController extends Controller
     {
         Auth::check();
 
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            (new ErrorController())->badRequest();
+            return;
+        }
+
+        if (!$this->validateCsrf()) {
+            return;
+        }
+
         $firstName = trim($_POST['first_name'] ?? '');
         $lastName = trim($_POST['last_name'] ?? '');
         $currencyId = (int)($_POST['currency_id'] ?? 1);
 
         if (empty($firstName)) {
             $_SESSION['settings_error'] = 'First name is required.';
+            $this->redirect('/settings');
+            return;
+        }
+
+        if (strlen($firstName) > 100 || strlen($lastName) > 100) {
+            $_SESSION['settings_error'] = 'Provided data is too long.';
             $this->redirect('/settings');
             return;
         }
